@@ -331,7 +331,103 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         </div>
       </div>
 
-      <div class="view" id="view-clientes">
+      <div class="view" id="view-cardapio">
+  <h2 class="view-title">🍔 Gestão do Cardápio</h2>
+
+  <!-- Stats -->
+  <div class="car-stat-row" id="car-stats">
+    <div class="car-stat"><div class="car-stat-val" id="cs-total">—</div><div class="car-stat-lbl">Total Itens</div></div>
+    <div class="car-stat"><div class="car-stat-val" id="cs-ativos">—</div><div class="car-stat-lbl">Ativos</div></div>
+    <div class="car-stat"><div class="car-stat-val" id="cs-cats">—</div><div class="car-stat-lbl">Categorias</div></div>
+    <div class="car-stat"><div class="car-stat-val" id="cs-avg">—</div><div class="car-stat-lbl">Preço Médio</div></div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="car-toolbar">
+    <input type="text" id="car-search" placeholder="🔍 Buscar item..." oninput="carRender()" style="flex:1;min-width:160px;">
+    <select id="car-filter-status" onchange="carRender()">
+      <option value="todos">Todos os status</option>
+      <option value="ativos">Apenas ativos</option>
+      <option value="inativos">Apenas inativos</option>
+    </select>
+    <button class="btn-primary" style="padding:8px 16px;font-size:.82rem;" onclick="carOpenModal()">+ Novo Item</button>
+  </div>
+
+  <!-- Tabs de categoria -->
+  <div class="car-cat-tabs" id="car-cat-tabs"></div>
+
+  <!-- Tabela -->
+  <div style="overflow-x:auto;">
+    <table class="car-table">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Categoria</th>
+          <th>Preço</th>
+          <th>Adicionais</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="car-tbody"></tbody>
+    </table>
+  </div>
+  <div id="car-empty" style="display:none;text-align:center;padding:40px;color:var(--txt2);font-size:.85rem;">
+    Nenhum item encontrado
+  </div>
+</div>
+
+<!-- Modal Editar/Criar Item -->
+<div class="car-modal-overlay" id="car-modal" style="display:none;" onclick="if(event.target===this)carCloseModal()">
+  <div class="car-modal">
+    <h3 id="car-modal-title">➕ Novo Item</h3>
+    <div class="car-form-row">
+      <label>Categoria</label>
+      <select id="cf-cat"></select>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <div class="car-form-row" style="width:60px;">
+        <label>Emoji</label>
+        <input type="text" id="cf-emoji" maxlength="4" placeholder="🍔">
+      </div>
+      <div class="car-form-row" style="flex:1;">
+        <label>Nome do Item</label>
+        <input type="text" id="cf-nome" placeholder="Ex: Super Americano">
+      </div>
+    </div>
+    <div class="car-form-row">
+      <label>Descrição (ingredientes)</label>
+      <textarea id="cf-desc" placeholder="Pão, hambúrguer, queijo, ovo..."></textarea>
+    </div>
+    <div style="display:flex;gap:12px;">
+      <div class="car-form-row" style="flex:1;">
+        <label>Preço (R$)</label>
+        <input type="number" id="cf-preco" min="0" step="0.50" placeholder="0,00">
+      </div>
+      <div class="car-form-row" style="flex:1;">
+        <label>Tem Adicionais?</label>
+        <select id="cf-ads">
+          <option value="false">Não</option>
+          <option value="true">Sim (sanduíches)</option>
+        </select>
+      </div>
+    </div>
+    <div class="car-form-row">
+      <label>Status</label>
+      <select id="cf-ativo">
+        <option value="true">✅ Ativo (aparece no cardápio)</option>
+        <option value="false">❌ Inativo (oculto)</option>
+      </select>
+    </div>
+    <div class="car-form-btns">
+      <button class="btn-cancel-item" onclick="carCloseModal()">Cancelar</button>
+      <button class="btn-del-item" id="cf-del-btn" style="display:none;" onclick="carDeleteItem()">🗑 Excluir</button>
+      <button class="btn-save-item" onclick="carSaveItem()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-clientes">
         <div class="section-title">
           <div><h2>Clientes</h2><p>Cadastro automático via pedidos</p></div>
           <input class="search-bar" type="text" placeholder="🔍 Nome ou telefone..." oninput="filterClientes(this.value)">
@@ -544,6 +640,7 @@ function showView(name, btn) {
   if (name==='historico') renderHistorico();
   if (name==='clientes')  renderClientes();
   if (name==='impressao') populateImpressao();
+  if (name==='cardapio')  carLoad();
 }
 
 // ── CLOCK ──────────────────────────────
@@ -1199,6 +1296,228 @@ function showToast(msg) {
 
   renderKanban();
 })();
+
+// ════════════════════════════════════════════════════
+// GESTÃO DO CARDÁPIO
+// ════════════════════════════════════════════════════
+var carItems = [];
+var carCats  = [];
+var carCatAtiva = 'todas';
+var carEditId = null;
+
+async function carLoad() {
+  try {
+    const [catR, itmR] = await Promise.all([
+      SUPA.from('categorias_skali').select('*').order('ordem'),
+      SUPA.from('cardapio_skali').select('*').order('ordem')
+    ]);
+    if (catR.error) throw catR.error;
+    if (itmR.error) throw itmR.error;
+    carCats  = catR.data || [];
+    carItems = itmR.data || [];
+    carRenderTabs();
+    carRender();
+    carRenderStats();
+    carPopulateCatSelect();
+  } catch(e) {
+    showToast('❌ Erro ao carregar cardápio: ' + e.message);
+  }
+}
+
+function carRenderStats() {
+  var total  = carItems.length;
+  var ativos = carItems.filter(i=>i.ativo).length;
+  var cats   = carCats.filter(c=>c.ativo).length;
+  var precos = carItems.filter(i=>i.ativo).map(i=>parseFloat(i.preco));
+  var avg    = precos.length ? (precos.reduce((a,b)=>a+b,0)/precos.length).toFixed(2).replace('.',',') : '0';
+  document.getElementById('cs-total').textContent  = total;
+  document.getElementById('cs-ativos').textContent = ativos;
+  document.getElementById('cs-cats').textContent   = cats;
+  document.getElementById('cs-avg').textContent    = 'R$'+avg;
+}
+
+function carRenderTabs() {
+  var el = document.getElementById('car-cat-tabs');
+  if (!el) return;
+  var html = '<button class="car-cat-tab'+(carCatAtiva==='todas'?' active':'')+'" onclick="carSetCat(\'todas\')">Todas</button>';
+  carCats.forEach(function(cat) {
+    html += '<button class="car-cat-tab'+(carCatAtiva===cat.id?' active':'')+'" onclick="carSetCat(\''+cat.id+'\')">' + cat.icon + ' ' + cat.titulo + '</button>';
+  });
+  el.innerHTML = html;
+}
+
+function carSetCat(id) {
+  carCatAtiva = id;
+  carRenderTabs();
+  carRender();
+}
+
+function carRender() {
+  var search = (document.getElementById('car-search')?.value||'').toLowerCase();
+  var status = document.getElementById('car-filter-status')?.value || 'todos';
+  var tbody  = document.getElementById('car-tbody');
+  var empty  = document.getElementById('car-empty');
+  if (!tbody) return;
+
+  var filtered = carItems.filter(function(item) {
+    var catOk  = carCatAtiva === 'todas' || item.categoria_id === carCatAtiva;
+    var srchOk = !search || item.nome.toLowerCase().includes(search) || (item.descricao||'').toLowerCase().includes(search);
+    var stOk   = status==='todos' || (status==='ativos'&&item.ativo) || (status==='inativos'&&!item.ativo);
+    return catOk && srchOk && stOk;
+  });
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  var html = '';
+  filtered.forEach(function(item) {
+    var cat = carCats.find(function(c){return c.id===item.categoria_id;}) || {};
+    var preco = parseFloat(item.preco).toFixed(2).replace('.',',');
+    var ativoClass = item.ativo ? 'on' : '';
+    html += '<tr>';
+    html += '<td><strong>' + (item.emoji||'') + ' ' + item.nome + '</strong>';
+    if (item.descricao) html += '<br><small style="color:var(--txt2)">' + item.descricao + '</small>';
+    html += '</td>';
+    html += '<td>' + (cat.icon||'') + ' ' + (cat.titulo||'—') + '</td>';
+    html += '<td><input class="car-price-input" type="number" value="' + parseFloat(item.preco).toFixed(2) + '" min="0" step="0.5" onchange="carUpdatePreco(' + item.id + ',this.value)" title="Clique para editar preço"></td>';
+    html += '<td>' + (item.tem_adicionais ? '<span class="car-badge">✓ Sim</span>' : '<span style="color:var(--txt2);font-size:.75rem;">—</span>') + '</td>';
+    html += '<td><div class="car-toggle"><div class="toggle-sw ' + ativoClass + '" onclick="carToggleAtivo(' + item.id + ',this)" title="' + (item.ativo?'Ativo — clique para desativar':'Inativo — clique para ativar') + '"></div><span style="font-size:.72rem;color:var(--txt2)">' + (item.ativo?'Ativo':'Inativo') + '</span></div></td>';
+    html += '<td><button onclick="carOpenModal(' + item.id + ')" style="background:transparent;border:1.5px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--txt);cursor:pointer;font-size:.75rem;">✏️ Editar</button></td>';
+    html += '</tr>';
+  });
+  tbody.innerHTML = html;
+}
+
+async function carToggleAtivo(id, el) {
+  var newVal = !el.classList.contains('on');
+  el.classList.toggle('on');
+  el.nextElementSibling.textContent = newVal ? 'Ativo' : 'Inativo';
+  var item = carItems.find(function(i){return i.id===id;});
+  if (item) item.ativo = newVal;
+  carRenderStats();
+  try {
+    await SUPA.from('cardapio_skali').update({ativo: newVal, updated_at: new Date().toISOString()}).eq('id', id);
+  } catch(e) { showToast('❌ Erro ao atualizar: ' + e.message); }
+}
+
+async function carUpdatePreco(id, val) {
+  var preco = parseFloat(val);
+  if (isNaN(preco) || preco < 0) return;
+  var item = carItems.find(function(i){return i.id===id;});
+  if (item) { item.preco = preco; carRenderStats(); }
+  try {
+    await SUPA.from('cardapio_skali').update({preco: preco, updated_at: new Date().toISOString()}).eq('id', id);
+    showToast('✅ Preço atualizado');
+  } catch(e) { showToast('❌ Erro ao atualizar preço'); }
+}
+
+function carPopulateCatSelect() {
+  var sel = document.getElementById('cf-cat');
+  if (!sel) return;
+  sel.innerHTML = carCats.map(function(c){
+    return '<option value="' + c.id + '">' + c.icon + ' ' + c.titulo + '</option>';
+  }).join('');
+}
+
+function carOpenModal(id) {
+  carEditId = id || null;
+  var modal = document.getElementById('car-modal');
+  var title = document.getElementById('car-modal-title');
+  var delBtn = document.getElementById('cf-del-btn');
+  carPopulateCatSelect();
+
+  if (id) {
+    var item = carItems.find(function(i){return i.id===id;});
+    if (!item) return;
+    title.textContent = '✏️ Editar Item';
+    delBtn.style.display = 'block';
+    document.getElementById('cf-cat').value   = item.categoria_id;
+    document.getElementById('cf-emoji').value = item.emoji || '';
+    document.getElementById('cf-nome').value  = item.nome;
+    document.getElementById('cf-desc').value  = item.descricao || '';
+    document.getElementById('cf-preco').value = parseFloat(item.preco).toFixed(2);
+    document.getElementById('cf-ads').value   = String(item.tem_adicionais);
+    document.getElementById('cf-ativo').value = String(item.ativo);
+  } else {
+    title.textContent = '➕ Novo Item';
+    delBtn.style.display = 'none';
+    document.getElementById('cf-emoji').value = '🍔';
+    document.getElementById('cf-nome').value  = '';
+    document.getElementById('cf-desc').value  = '';
+    document.getElementById('cf-preco').value = '';
+    document.getElementById('cf-ads').value   = 'false';
+    document.getElementById('cf-ativo').value = 'true';
+  }
+  modal.style.display = 'flex';
+}
+
+function carCloseModal() {
+  document.getElementById('car-modal').style.display = 'none';
+  carEditId = null;
+}
+
+async function carSaveItem() {
+  var cat   = document.getElementById('cf-cat').value;
+  var emoji = document.getElementById('cf-emoji').value.trim() || '🍔';
+  var nome  = document.getElementById('cf-nome').value.trim();
+  var desc  = document.getElementById('cf-desc').value.trim();
+  var preco = parseFloat(document.getElementById('cf-preco').value);
+  var ads   = document.getElementById('cf-ads').value === 'true';
+  var ativo = document.getElementById('cf-ativo').value === 'true';
+
+  if (!nome) { showToast('❌ Informe o nome do item'); return; }
+  if (isNaN(preco) || preco <= 0) { showToast('❌ Informe um preço válido'); return; }
+
+  var payload = {
+    categoria_id: cat, emoji, nome, descricao: desc,
+    preco, tem_adicionais: ads, ativo,
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    if (carEditId) {
+      var r = await SUPA.from('cardapio_skali').update(payload).eq('id', carEditId);
+      if (r.error) throw r.error;
+      var idx = carItems.findIndex(function(i){return i.id===carEditId;});
+      if (idx >= 0) carItems[idx] = {...carItems[idx], ...payload};
+      showToast('✅ Item atualizado!');
+    } else {
+      var maxOrdem = carItems.filter(function(i){return i.categoria_id===cat;}).length + 1;
+      payload.ordem = maxOrdem;
+      var r = await SUPA.from('cardapio_skali').insert([payload]).select();
+      if (r.error) throw r.error;
+      if (r.data && r.data[0]) carItems.push(r.data[0]);
+      showToast('✅ Item criado!');
+    }
+    carCloseModal();
+    carRender();
+    carRenderStats();
+  } catch(e) {
+    showToast('❌ Erro ao salvar: ' + e.message);
+  }
+}
+
+async function carDeleteItem() {
+  if (!carEditId) return;
+  var item = carItems.find(function(i){return i.id===carEditId;});
+  if (!item) return;
+  if (!confirm('Excluir "' + item.nome + '"? Esta ação não pode ser desfeita.')) return;
+  try {
+    var r = await SUPA.from('cardapio_skali').delete().eq('id', carEditId);
+    if (r.error) throw r.error;
+    carItems = carItems.filter(function(i){return i.id!==carEditId;});
+    carCloseModal();
+    carRender();
+    carRenderStats();
+    showToast('🗑 Item excluído');
+  } catch(e) {
+    showToast('❌ Erro ao excluir: ' + e.message);
+  }
+}
 
 // ════ SUPABASE REALTIME ══════════════════════════════
 async function supabaseInit() {
