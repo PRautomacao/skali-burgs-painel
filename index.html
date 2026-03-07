@@ -98,6 +98,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .oc-btn.next{background:var(--am);color:var(--az);}
 .oc-btn.next:hover{background:var(--am2);}
 .oc-btn.print{background:rgba(255,255,255,.08);color:var(--txt);}
+.oc-btn.del{background:rgba(239,68,68,.15);color:var(--red);flex:0;padding:5px 8px;}
+.oc-btn.del:hover{background:rgba(239,68,68,.3);}
 .search-bar{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:8px 14px;font-family:'Nunito',sans-serif;font-size:.8rem;color:var(--txt);outline:none;width:260px;transition:border-color .2s;}
 .search-bar:focus{border-color:var(--am);}
 .search-bar::placeholder{color:var(--txt2);}
@@ -724,7 +726,7 @@ function buildCard(p) {
     + '<div class="oc-sectors">'+stags+'</div>'
     + '<div class="oc-items">'+preview+'</div>'
     + '<div class="oc-total">'+fmt(p.total)+'</div>'
-    + '<div class="oc-actions">'+nextBtn+'<button class="oc-btn print" onclick="event.stopPropagation();quickPrint(\''+p.id+'\')">🖨️</button></div>'
+    + '<div class="oc-actions">'+nextBtn+'<button class="oc-btn print" onclick="event.stopPropagation();quickPrint(\''+p.id+'\')">🖨️</button><button class="oc-btn del" title="Excluir pedido" onclick="event.stopPropagation();deleteOrder(\''+p.id+'\')">🗑</button></div>'
     + '</div>';
 }
 
@@ -736,6 +738,20 @@ function advance(id) {
   showToast('Pedido #'+String(p.seq).padStart(3,'0')+' → '+p.status.toUpperCase());
   // Sync com Supabase
   if (p.supa_id) supabaseUpdateStatus(p.supa_id, p.status);
+}
+
+async function deleteOrder(id) {
+  var p = pedidos.find(function(x){ return x.id===id; });
+  if (!p) return;
+  if (!confirm('Excluir pedido #'+String(p.seq).padStart(3,'0')+' ('+p.cliente+')?\nEsta ação não pode ser desfeita.')) return;
+  pedidos = pedidos.filter(function(x){ return x.id!==id; });
+  renderKanban();
+  showToast('🗑 Pedido #'+String(p.seq).padStart(3,'0')+' excluído');
+  if (p.supa_id) {
+    try {
+      await SUPA.from('pedidos_skali').delete().eq('id', p.supa_id);
+    } catch(e) { console.warn('Erro ao excluir no Supabase:', e); }
+  }
 }
 
 // ── DETALHE ────────────────────────────
@@ -775,8 +791,9 @@ function openDetail(id) {
     + '<div style="display:flex;justify-content:space-between;padding:8px 0;font-weight:900;">'
     +   '<span>Total</span><span style="color:var(--am);font-family:Bebas Neue,sans-serif;font-size:1.1rem;">'+fmt(p.total)+'</span>'
     + '</div>'
-    + '<button onclick="quickPrint(\''+p.id+'\');closeModal();" style="width:100%;background:rgba(255,255,255,.08);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:9px;font-family:Nunito,sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;">🖨️ Imprimir Todas as Comandas</button>'
-    + nextBtn;
+    + '<button onclick="quickPrint(\''+p.id+'\');closeModal();" style="width:100%;background:rgba(255,255,255,.08);color:var(--txt);border:1px solid var(--border);border-radius:10px;padding:9px;font-family:Nunito,sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;margin-bottom:6px;">🖨️ Imprimir Todas as Comandas</button>'
+    + nextBtn
+    + '<button onclick="closeModal();deleteOrder(\''+p.id+'\');" style="width:100%;background:rgba(239,68,68,.12);color:var(--red);border:1px solid rgba(239,68,68,.3);border-radius:10px;padding:9px;font-family:Nunito,sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;margin-top:6px;">🗑 Excluir Pedido</button>';
   openModal();
 }
 
