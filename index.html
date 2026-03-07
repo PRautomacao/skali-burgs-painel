@@ -29,6 +29,11 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .sb-badge{background:var(--red);color:#fff;border-radius:10px;padding:1px 6px;font-size:.6rem;font-weight:900;margin-left:auto;min-width:18px;text-align:center;}
 .sb-footer{padding:12px;border-top:1px solid var(--border);}
 .sb-time{font-size:.7rem;color:var(--txt2);font-weight:700;text-align:center;margin-bottom:3px;}
+.btn-fechar-loja{width:100%;margin-top:8px;padding:8px;border:none;border-radius:8px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.72rem;cursor:pointer;transition:all .2s;}
+.btn-fechar-loja.aberto{background:rgba(239,68,68,.15);color:var(--red);border:1.5px solid rgba(239,68,68,.3);}
+.btn-fechar-loja.aberto:hover{background:rgba(239,68,68,.3);}
+.btn-fechar-loja.fechado{background:rgba(34,197,94,.15);color:var(--green);border:1.5px solid rgba(34,197,94,.3);}
+.btn-fechar-loja.fechado:hover{background:rgba(34,197,94,.3);}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
 .topbar{background:var(--bg2);border-bottom:2px solid var(--border);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .topbar-title{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--am);letter-spacing:3px;}
@@ -278,6 +283,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div class="sb-footer">
       <div class="sb-time" id="sb-clock">⏰ 00:00</div>
       <div class="sb-time" id="sb-status" style="margin-top:2px;">● Verificando...</div>
+      <button class="btn-fechar-loja aberto" id="btn-toggle-loja" onclick="toggleLoja()">🔴 Fechar Loja</button>
     </div>
   </aside>
 
@@ -646,24 +652,41 @@ function showView(name, btn) {
 }
 
 // ── CLOCK ──────────────────────────────
+var manualFechado = false;
+
+function toggleLoja() {
+  manualFechado = !manualFechado;
+  updateClock();
+}
+
 function updateClock() {
   var now = new Date();
   var h = String(now.getHours()).padStart(2,'0');
   var m = String(now.getMinutes()).padStart(2,'0');
   document.getElementById('sb-clock').textContent = '⏰ ' + h + ':' + m;
   var dia = now.getDay(), min = now.getHours()*60+now.getMinutes();
-  var aberto = (dia !== 2 && min >= 19*60);
+  var autoAberto = (dia !== 2 && min >= 19*60);
+  var aberto = autoAberto && !manualFechado;
   var chip = document.getElementById('topbar-status');
   var dot  = document.getElementById('topbar-dot');
   var stxt = document.getElementById('topbar-status-text');
   var sbst = document.getElementById('sb-status');
+  var btnLoja = document.getElementById('btn-toggle-loja');
   if (aberto) {
     chip.className='status-chip open'; dot.className='blink g';
     stxt.textContent='Aberto'; sbst.textContent='🟢 Estabelecimento aberto'; sbst.style.color='var(--green)';
+    if (btnLoja) { btnLoja.className='btn-fechar-loja aberto'; btnLoja.textContent='🔴 Fechar Loja'; }
   } else {
     chip.className='status-chip closed'; dot.className='blink r';
-    stxt.textContent = dia===2?'Fechado (Terça)':'Abre às 19:00';
-    sbst.textContent = '🔴 '+(dia===2?'Fechado hoje':'Abre às 19:00'); sbst.style.color='var(--red)';
+    if (manualFechado) {
+      stxt.textContent='Fechado (manual)';
+      sbst.textContent='🔴 Fechado manualmente'; sbst.style.color='var(--red)';
+      if (btnLoja) { btnLoja.className='btn-fechar-loja fechado'; btnLoja.textContent='🟢 Reabrir Loja'; }
+    } else {
+      stxt.textContent = dia===2?'Fechado (Terça)':'Abre às 19:00';
+      sbst.textContent = '🔴 '+(dia===2?'Fechado hoje':'Abre às 19:00'); sbst.style.color='var(--red)';
+      if (btnLoja) { btnLoja.className='btn-fechar-loja aberto'; btnLoja.textContent='🔴 Fechar Loja'; }
+    }
   }
 }
 setInterval(updateClock, 30000);
