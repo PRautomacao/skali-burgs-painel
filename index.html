@@ -58,8 +58,26 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .stat-card.orange::before{background:var(--orange);}
 .stat-card.blue::before{background:var(--blue);}
 .stat-icon{font-size:1.5rem;margin-bottom:6px;}
-.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--txt);letter-spacing:1px;line-height:1;}
+.stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.9rem;color:var(--txt);letter-spacing:1px;line-height:1;transition:filter .3s;}
+.stat-val.blurred{filter:blur(8px);user-select:none;cursor:pointer;}
 .stat-label{font-size:.68rem;color:var(--txt2);font-weight:700;margin-top:2px;text-transform:uppercase;letter-spacing:.5px;}
+/* Botão olho nos stat-cards */
+.stat-eye{
+  position:absolute;top:10px;right:10px;
+  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:7px;padding:3px 7px;cursor:pointer;font-size:.75rem;
+  color:var(--txt2);transition:all .2s;line-height:1;
+}
+.stat-eye:hover{background:rgba(245,196,0,.15);color:var(--am);border-color:rgba(245,196,0,.3);}
+/* Botão olho global no topbar */
+.eye-toggle-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 12px;
+  background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+  border-radius:10px;cursor:pointer;font-size:.72rem;font-weight:800;
+  color:var(--txt2);transition:all .2s;font-family:'Nunito',sans-serif;
+}
+.eye-toggle-btn:hover{background:rgba(245,196,0,.12);color:var(--am);border-color:rgba(245,196,0,.3);}
+.eye-toggle-btn.visible{color:var(--am);border-color:rgba(245,196,0,.4);background:rgba(245,196,0,.1);}
 .section-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
 .section-title h2{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--txt);letter-spacing:2px;}
 .section-title p{font-size:.72rem;color:var(--txt2);font-weight:700;margin-top:2px;}
@@ -373,6 +391,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
           <span class="blink r" id="topbar-dot"></span>
           <span id="topbar-status-text">Fechado</span>
         </div>
+        <button class="eye-toggle-btn" id="eye-toggle" onclick="toggleStatsVisibility()" title="Mostrar/ocultar valores">👁️ Valores</button>
         <button class="btn-am" onclick="openNewOrder()">+ Novo Pedido Manual</button>
       </div>
     </div>
@@ -380,10 +399,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div class="content">
       <div class="view active" id="view-dashboard">
         <div class="stats-grid">
-          <div class="stat-card yellow"><div class="stat-icon">🎫</div><div class="stat-val" id="stat-hoje">0</div><div class="stat-label">Pedidos Hoje</div></div>
-          <div class="stat-card green"><div class="stat-icon">✅</div><div class="stat-val" id="stat-entregues">0</div><div class="stat-label">Entregues</div></div>
-          <div class="stat-card orange"><div class="stat-icon">⏳</div><div class="stat-val" id="stat-andamento">0</div><div class="stat-label">Em Andamento</div></div>
-          <div class="stat-card blue"><div class="stat-icon">💰</div><div class="stat-val" id="stat-fat">R$0</div><div class="stat-label">Faturamento</div></div>
+          <div class="stat-card yellow"><button class="stat-eye" onclick="toggleSingleStat('stat-hoje',this)">👁️</button><div class="stat-icon">🎫</div><div class="stat-val blurred" id="stat-hoje" onclick="toggleSingleStat('stat-hoje',null)">0</div><div class="stat-label">Pedidos Hoje</div></div>
+          <div class="stat-card green"><button class="stat-eye" onclick="toggleSingleStat('stat-entregues',this)">👁️</button><div class="stat-icon">✅</div><div class="stat-val blurred" id="stat-entregues" onclick="toggleSingleStat('stat-entregues',null)">0</div><div class="stat-label">Entregues</div></div>
+          <div class="stat-card orange"><button class="stat-eye" onclick="toggleSingleStat('stat-andamento',this)">👁️</button><div class="stat-icon">⏳</div><div class="stat-val blurred" id="stat-andamento" onclick="toggleSingleStat('stat-andamento',null)">0</div><div class="stat-label">Em Andamento</div></div>
+          <div class="stat-card blue"><button class="stat-eye" onclick="toggleSingleStat('stat-fat',this)">👁️</button><div class="stat-icon">💰</div><div class="stat-val blurred" id="stat-fat" onclick="toggleSingleStat('stat-fat',null)">R$0</div><div class="stat-label">Faturamento</div></div>
         </div>
         <div class="section-title">
           <div><h2>Fila Ativa</h2><p>Pedidos em andamento agora</p></div>
@@ -711,6 +730,39 @@ var STATUS_COLOR = {
 };
 
 // ── VIEWS ──────────────────────────────
+// ── TOGGLE VISIBILIDADE DOS STATS ──────
+var statsVisible = false; // começa borrado
+var STAT_IDS = ['stat-hoje','stat-entregues','stat-andamento','stat-fat'];
+
+function toggleStatsVisibility() {
+  statsVisible = !statsVisible;
+  STAT_IDS.forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      if (statsVisible) el.classList.remove('blurred');
+      else el.classList.add('blurred');
+    }
+  });
+  var btn = document.getElementById('eye-toggle');
+  if (btn) {
+    btn.innerHTML = statsVisible ? '🙈 Ocultar' : '👁️ Valores';
+    btn.className = statsVisible ? 'eye-toggle-btn visible' : 'eye-toggle-btn';
+  }
+}
+
+function toggleSingleStat(id, eyeBtn) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  var isBlurred = el.classList.contains('blurred');
+  if (isBlurred) {
+    el.classList.remove('blurred');
+    // Após 5 segundos, volta a borrar automaticamente
+    setTimeout(function() { el.classList.add('blurred'); }, 5000);
+  } else {
+    el.classList.add('blurred');
+  }
+}
+
 function showView(name, btn) {
   document.querySelectorAll('.view').forEach(function(v){ v.classList.remove('active'); });
   document.querySelectorAll('.sb-btn').forEach(function(b){ b.classList.remove('active'); });
