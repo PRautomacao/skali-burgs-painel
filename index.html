@@ -366,34 +366,65 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .m-send-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;color:var(--az);cursor:pointer;transition:all .2s;}
 .m-send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,196,0,.3);}
 .m-send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
-/* comanda modal */
-.cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+/* comanda full-screen */
+.cmd-overlay{position:fixed;inset:0;background:var(--bg);z-index:300;display:none;flex-direction:column;}
 .cmd-overlay.open{display:flex;}
-.cmd-box{background:var(--bg2);border:2px solid var(--border);border-radius:16px;width:96%;max-width:680px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.7);}
-.cmd-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
-.cmd-head-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);letter-spacing:2px;}
-.cmd-body{padding:16px;overflow-y:auto;flex:1;}
-.cmd-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-.cmd-item.pago{opacity:.38;}
-.cmd-check{width:17px;height:17px;cursor:pointer;accent-color:var(--am);flex-shrink:0;}
-.cmd-em{font-size:1.1rem;flex-shrink:0;}
-.cmd-name{flex:1;font-size:.78rem;font-weight:800;}
-.cmd-badge-pago{font-size:.55rem;font-weight:900;color:var(--green);background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:5px;padding:1px 5px;margin-left:4px;}
-.cmd-price{font-family:'Bebas Neue',sans-serif;font-size:.88rem;color:var(--am);flex-shrink:0;}
-.cmd-time{font-size:.6rem;color:var(--txt2);font-weight:700;flex-shrink:0;margin-right:2px;}
-.cmd-totals{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:14px;}
-.cmd-tr{display:flex;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--txt2);margin-bottom:4px;}
-.cmd-tr.total{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
-.cmd-footer{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
-.cmd-btn{flex:1;min-width:110px;padding:10px 12px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.75rem;cursor:pointer;transition:all .15s;text-align:center;}
-.cmd-btn.add{background:rgba(245,196,0,.1);color:var(--am);border:1.5px solid rgba(245,196,0,.3);}
-.cmd-btn.add:hover{background:rgba(245,196,0,.2);}
-.cmd-btn.partial{background:rgba(59,130,246,.1);color:#60a5fa;border:1.5px solid rgba(59,130,246,.3);}
-.cmd-btn.partial:hover{background:rgba(59,130,246,.2);}
-.cmd-btn.conta{background:rgba(249,115,22,.1);color:var(--orange);border:1.5px solid rgba(249,115,22,.3);}
-.cmd-btn.conta:hover{background:rgba(249,115,22,.2);}
-.cmd-btn.close{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;}
-.cmd-btn.close:hover{transform:translateY(-1px);}
+.cmd-topbar{background:var(--bg2);border-bottom:2px solid var(--border);padding:12px 20px;display:flex;align-items:center;gap:14px;flex-shrink:0;}
+.cmd-back-btn{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:8px 14px;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:5px;}
+.cmd-back-btn:hover{background:rgba(245,196,0,.1);color:var(--am);border-color:rgba(245,196,0,.3);}
+.cmd-mesa-lbl{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--am);letter-spacing:3px;}
+.cmd-schip{font-size:.63rem;font-weight:900;padding:4px 10px;border-radius:12px;text-transform:uppercase;letter-spacing:1px;}
+.cmd-schip.ocupada{background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
+.cmd-schip.conta{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
+.cmd-content{display:flex;flex:1;overflow:hidden;}
+.cmd-prods{flex:1;overflow-y:auto;padding:16px;background:var(--bg);}
+.cmd-prods-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cmd-prods-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
+.cmd-prods-hint{font-size:.62rem;color:var(--txt2);font-weight:700;}
+.cprod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
+.cprod-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:10px;position:relative;transition:all .2s;user-select:none;}
+.cprod-card.sel{border-color:var(--am);background:rgba(245,196,0,.09);}
+.cprod-card.pago-card{opacity:.32;border-color:rgba(34,197,94,.2);}
+.cprod-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+.cprod-check{width:17px;height:17px;cursor:pointer;accent-color:var(--am);}
+.cprod-rm{background:none;border:none;color:rgba(239,68,68,.45);cursor:pointer;font-size:.8rem;padding:2px;line-height:1;transition:color .15s;}
+.cprod-rm:hover{color:var(--red);}
+.cprod-emoji{font-size:2.4rem;text-align:center;margin:4px 0 6px;line-height:1.1;}
+.cprod-name{font-size:.7rem;font-weight:900;text-align:center;color:var(--txt);line-height:1.3;margin-bottom:3px;}
+.cprod-price{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);text-align:center;}
+.cprod-pago-lbl{display:block;text-align:center;font-size:.52rem;font-weight:900;color:var(--green);margin-top:3px;}
+.cprod-hr{display:block;text-align:center;font-size:.56rem;color:var(--txt2);margin-top:2px;}
+.cmd-addmore-btn{margin-top:14px;width:100%;padding:12px;background:rgba(245,196,0,.06);border:1.5px dashed rgba(245,196,0,.25);border-radius:12px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;transition:all .2s;}
+.cmd-addmore-btn:hover{background:rgba(245,196,0,.13);border-style:solid;}
+.cmd-bill{width:290px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
+.cmd-bill-hdr{padding:14px 16px;border-bottom:1px solid var(--border);}
+.cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
+.cmd-bill-sub{font-size:.6rem;color:var(--txt2);font-weight:700;margin-top:2px;}
+.cmd-bill-rows{flex:1;overflow-y:auto;padding:6px 16px;}
+.cmd-brow{display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.7rem;font-weight:700;}
+.cmd-brow.sel-row{color:var(--am);}
+.cmd-brow.pago-brow{opacity:.32;}
+.cmd-brow-em{font-size:.9rem;}
+.cmd-brow-name{flex:1;line-height:1.3;}
+.cmd-brow-price{font-family:'Bebas Neue',sans-serif;font-size:.82rem;color:var(--am);}
+.cmd-brow.pago-brow .cmd-brow-price{color:var(--green);}
+.cmd-totals-box{padding:12px 16px;border-top:1px solid var(--border);}
+.cmd-trow{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--txt2);margin-bottom:4px;}
+.cmd-trow.sel-total{color:var(--am);}
+.cmd-trow.pago-total{color:var(--green);}
+.cmd-trow.grand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
+.cmd-actions{padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.cmd-act{width:100%;padding:10px 14px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
+.cmd-act.partial{background:rgba(59,130,246,.1);color:#60a5fa;border:1.5px solid rgba(59,130,246,.3);}
+.cmd-act.partial:hover{background:rgba(59,130,246,.2);}
+.cmd-act.conta{background:rgba(249,115,22,.1);color:var(--orange);border:1.5px solid rgba(249,115,22,.3);}
+.cmd-act.conta:hover{background:rgba(249,115,22,.2);}
+.cmd-act.print{background:rgba(255,255,255,.06);color:var(--txt2);border:1.5px solid rgba(255,255,255,.1);}
+.cmd-act.print:hover{background:rgba(255,255,255,.1);color:var(--txt);}
+.cmd-act.close{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;}
+.cmd-act.close:hover{transform:translateY(-1px);}
+.cmd-act:disabled{opacity:.32;cursor:not-allowed;transform:none !important;}
+.cmd-hint-box{font-size:.6rem;color:var(--txt2);font-weight:700;text-align:center;padding:6px 10px;background:rgba(245,196,0,.04);border-radius:8px;border:1px solid rgba(245,196,0,.1);}
 /* zerésima */
 .zer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
 .zer-overlay.open{display:flex;}
@@ -689,19 +720,40 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   </div>
 </div>
 
-<!-- MODAL: COMANDA DA MESA -->
-<div class="cmd-overlay" id="comanda-overlay" onclick="if(event.target===this)closeComandaModal()">
-  <div class="cmd-box">
-    <div class="cmd-head">
-      <div class="cmd-head-title" id="comanda-modal-title">🧾 COMANDA — MESA 01</div>
-      <button class="modal-close" onclick="closeComandaModal()">✕</button>
+<!-- COMANDA FULL-SCREEN -->
+<div class="cmd-overlay" id="comanda-overlay">
+  <div class="cmd-topbar">
+    <button class="cmd-back-btn" onclick="closeComandaModal()">◀ Mesas</button>
+    <div class="cmd-mesa-lbl" id="cmd-mesa-lbl">🪑 MESA 01</div>
+    <span class="cmd-schip ocupada" id="cmd-schip">🟡 Ocupada</span>
+    <div style="flex:1;"></div>
+    <span id="cmd-rt-lbl" style="font-size:.62rem;color:var(--txt2);font-weight:700;">● Tempo Real</span>
+  </div>
+  <div class="cmd-content">
+    <!-- Esquerda: cards de produto -->
+    <div class="cmd-prods">
+      <div class="cmd-prods-hdr">
+        <div class="cmd-prods-title">ITENS DA MESA</div>
+        <div class="cmd-prods-hint">☑️ Marque os itens para fechar parcial</div>
+      </div>
+      <div class="cprod-grid" id="cprod-grid"></div>
+      <button class="cmd-addmore-btn" onclick="closeComandaModal();setTimeout(function(){abrirMesaModal(mesaAtual)},150)">➕ Adicionar Itens Manualmente</button>
     </div>
-    <div class="cmd-body" id="comanda-body"></div>
-    <div class="cmd-footer">
-      <button class="cmd-btn add" onclick="closeComandaModal();setTimeout(function(){abrirMesaModal(mesaAtual)},150)">➕ Adicionar Itens</button>
-      <button class="cmd-btn partial" onclick="fecharParcial()">💳 Fechar Parcial</button>
-      <button class="cmd-btn conta" onclick="pedirContaMesa()">📋 Pedir Conta</button>
-      <button class="cmd-btn close" onclick="fecharMesaTotal()">✅ Fechar Mesa</button>
+    <!-- Direita: comanda e ações -->
+    <div class="cmd-bill">
+      <div class="cmd-bill-hdr">
+        <div class="cmd-bill-title">📋 COMANDA</div>
+        <div class="cmd-bill-sub" id="cmd-bill-sub">Selecione itens para fechar parcial</div>
+      </div>
+      <div class="cmd-bill-rows" id="cmd-bill-rows"></div>
+      <div class="cmd-totals-box" id="cmd-totals-box"></div>
+      <div class="cmd-actions">
+        <div class="cmd-hint-box" id="cmd-hint-box">☑️ Marque os itens pagos na grade ao lado</div>
+        <button class="cmd-act partial" id="cmd-btn-partial" onclick="fecharParcial()">💳 Fechar Itens Selecionados</button>
+        <button class="cmd-act conta" onclick="pedirContaMesa()">📋 Pedir Conta</button>
+        <button class="cmd-act print" onclick="printCupomMesa()">🖨️ Imprimir Cupom</button>
+        <button class="cmd-act close" onclick="fecharMesaTotal()">✅ Fechar Mesa</button>
+      </div>
     </div>
   </div>
 </div>
@@ -930,7 +982,7 @@ function showView(name, btn) {
   if (name==='clientes')  renderClientes();
   if (name==='impressao') populateImpressao();
   if (name==='cardapio')  carLoad();
-  if (name==='mesas')     { loadMesasState().then(renderMesas); }
+  if (name==='mesas')     { loadMesasState().then(function(){ renderMesas(); iniciarMesaRealtime(); }); }
 }
 
 // ── CLOCK ──────────────────────────────
@@ -1992,48 +2044,89 @@ function doLogout() {
 var TOTAL_MESAS = 15;
 var mesaAtual = null;
 var mesaCartItems = [];
-var mesaItensGlobais = {};  // { mesaNum: [{id, item_nome, item_preco, emoji, status_pagamento, criado_em}] }
-var mesaStatusGlobais = {}; // { mesaNum: 'livre'|'ocupada'|'conta' }
+var mesaItensGlobais  = {};  // { mesaNum: [{id, item_nome, item_preco, emoji, status_pagamento, criado_em}] }
+var mesaStatusGlobais = {};  // { mesaNum: 'livre'|'ocupada'|'conta' }
 var mesaCatFilter = 'all';
+var mesaRealtimeSub = null;
 
+// ── CARREGA ESTADO DO SUPABASE ─────────────────────────────
 async function loadMesasState() {
   try {
-    var res1 = await SUPA.from('mesas_skali').select('*').order('numero');
-    if (res1.error) { console.warn('mesas_skali indisponível:', res1.error.message); return; }
-    if (res1.data) {
-      res1.data.forEach(function(m){ mesaStatusGlobais[m.numero] = m.status || 'livre'; });
-    }
-    var res2 = await SUPA.from('itens_comanda_skali').select('*').order('criado_em');
-    if (!res2.error && res2.data) {
+    var r1 = await SUPA.from('mesas_skali').select('*').order('numero');
+    if (r1.error) { console.warn('mesas_skali:', r1.error.message); return; }
+    if (r1.data)  r1.data.forEach(function(m){ mesaStatusGlobais[m.numero] = m.status || 'livre'; });
+
+    var r2 = await SUPA.from('itens_comanda_skali').select('*').order('criado_em');
+    if (!r2.error && r2.data) {
       mesaItensGlobais = {};
-      res2.data.forEach(function(it){
+      r2.data.forEach(function(it){
         if (!mesaItensGlobais[it.mesa_numero]) mesaItensGlobais[it.mesa_numero] = [];
         mesaItensGlobais[it.mesa_numero].push(it);
       });
     }
-  } catch(e) { console.warn('Erro ao carregar mesas:', e); }
+  } catch(e) { console.warn('loadMesasState:', e); }
 }
 
+// ── REALTIME: novos itens do tablet chegam aqui ────────────
+function iniciarMesaRealtime() {
+  if (mesaRealtimeSub) return;
+  mesaRealtimeSub = SUPA.channel('mesa-itens')
+    .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'itens_comanda_skali' },
+      function(payload) {
+        var it = payload.new;
+        if (!mesaItensGlobais[it.mesa_numero]) mesaItensGlobais[it.mesa_numero] = [];
+        mesaItensGlobais[it.mesa_numero].push(it);
+        if ((mesaStatusGlobais[it.mesa_numero] || 'livre') === 'livre') {
+          mesaStatusGlobais[it.mesa_numero] = 'ocupada';
+          SUPA.from('mesas_skali').update({ status: 'ocupada', aberta_em: new Date().toISOString() }).eq('numero', it.mesa_numero).then(function(){});
+        }
+        document.getElementById('cmd-rt-lbl') && (document.getElementById('cmd-rt-lbl').textContent = '🟢 Tempo Real');
+        if (mesaAtual === it.mesa_numero && document.getElementById('comanda-overlay').classList.contains('open')) {
+          renderComandaCards(it.mesa_numero);
+          renderComandaBill(it.mesa_numero);
+        }
+        renderMesas();
+        showToast('📲 Novo item na Mesa ' + String(it.mesa_numero).padStart(2,'0') + ': ' + it.item_nome);
+      }
+    )
+    .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'itens_comanda_skali' },
+      function(payload) {
+        var it = payload.new;
+        var list = mesaItensGlobais[it.mesa_numero] || [];
+        var idx = list.findIndex(function(x){ return x.id === it.id; });
+        if (idx !== -1) list[idx] = it; else list.push(it);
+        mesaItensGlobais[it.mesa_numero] = list;
+        if (mesaAtual === it.mesa_numero && document.getElementById('comanda-overlay').classList.contains('open')) {
+          renderComandaCards(it.mesa_numero);
+          renderComandaBill(it.mesa_numero);
+        }
+        renderMesas();
+      }
+    )
+    .subscribe();
+}
+
+// ── GRADE DE MESAS ─────────────────────────────────────────
 function renderMesas() {
   var grid = document.getElementById('mesa-grid');
   if (!grid) return;
   grid.innerHTML = '';
   for (var i = 1; i <= TOTAL_MESAS; i++) {
-    (function(num){
+    (function(num) {
       var status = mesaStatusGlobais[num] || 'livre';
-      var itens = (mesaItensGlobais[num] || []).filter(function(it){ return it.status_pagamento === 'pendente'; });
-      var qtd = itens.length;
-      var total = itens.reduce(function(s,it){ return s + (parseFloat(it.item_preco)||0); }, 0);
+      var itens  = (mesaItensGlobais[num] || []).filter(function(it){ return it.status_pagamento === 'pendente'; });
+      var qtd    = itens.length;
+      var total  = itens.reduce(function(s, it){ return s + (parseFloat(it.item_preco) || 0); }, 0);
 
       var card = document.createElement('div');
       card.className = 'mesa-card ' + status;
       card.onclick = function(){ clickMesa(num); };
 
-      var icon = status === 'livre' ? '🟢' : (status === 'conta' ? '🔴' : '🟡');
+      var icon   = status === 'livre' ? '🟢' : (status === 'conta' ? '🔴' : '🟡');
       var slabel = status === 'livre' ? 'Livre' : (status === 'conta' ? 'Conta Pedida' : 'Ocupada');
-      var extra = status !== 'livre'
+      var extra  = status !== 'livre'
         ? '<div class="mesa-info">'+qtd+' item'+(qtd!==1?'s':'')+'</div><div class="mesa-total">R$ '+total.toFixed(2).replace('.',',')+'</div>'
-        : '<div class="mesa-info" style="color:rgba(34,197,94,.5);font-size:.72rem;">Toque para atender</div>';
+        : '<div class="mesa-info" style="color:rgba(34,197,94,.5);font-size:.7rem;">Toque para atender</div>';
 
       card.innerHTML = '<div class="mesa-num">'+String(num).padStart(2,'0')+'</div>'
         + '<div class="mesa-slabel">'+icon+' '+slabel+'</div>'
@@ -2053,13 +2146,12 @@ function clickMesa(num) {
   }
 }
 
-// ── MODAL PEDIDO MESA ──────────────────────────────────────
+// ── MODAL ADICIONAR ITENS (do painel) ─────────────────────
 function abrirMesaModal(num) {
   mesaAtual = num;
   mesaCartItems = [];
   document.getElementById('mesa-modal-title').textContent = '🪑 MESA ' + String(num).padStart(2,'0') + ' — ADICIONAR ITENS';
 
-  // Categorias
   var catsEl = document.getElementById('mesa-cats');
   catsEl.innerHTML = '';
   var allBtn = document.createElement('button');
@@ -2067,12 +2159,11 @@ function abrirMesaModal(num) {
   allBtn.textContent = 'Todos';
   allBtn.onclick = function(){ filterMesaCat('all', allBtn); };
   catsEl.appendChild(allBtn);
-
   MENU.forEach(function(cat){
     var btn = document.createElement('button');
     btn.className = 'm-cat-btn';
     btn.textContent = cat.icon + ' ' + cat.title;
-    btn.onclick = (function(id,el){ return function(){ filterMesaCat(id,el); }; })(cat.id, btn);
+    btn.onclick = (function(id, el){ return function(){ filterMesaCat(id, el); }; })(cat.id, btn);
     catsEl.appendChild(btn);
   });
 
@@ -2100,29 +2191,21 @@ function renderMesaMenu() {
   var panel = document.getElementById('mesa-menu-items');
   panel.innerHTML = '';
   var lista = mesaCatFilter === 'all' ? MENU : MENU.filter(function(c){ return c.id === mesaCatFilter; });
-
   lista.forEach(function(cat){
-    var secDiv = document.createElement('div');
-    secDiv.className = 'm-sec-title';
-    secDiv.textContent = cat.icon + ' ' + cat.title;
-    panel.appendChild(secDiv);
-
+    var t = document.createElement('div'); t.className='m-sec-title'; t.textContent=cat.icon+' '+cat.title; panel.appendChild(t);
     cat.subs.forEach(function(sub){
       if (sub.title) {
-        var stDiv = document.createElement('div');
-        stDiv.style.cssText = 'font-size:.63rem;font-weight:900;color:var(--txt2);margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;';
-        stDiv.textContent = sub.title;
-        panel.appendChild(stDiv);
+        var st = document.createElement('div');
+        st.style.cssText='font-size:.63rem;font-weight:900;color:var(--txt2);margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;';
+        st.textContent = sub.title; panel.appendChild(st);
       }
       sub.items.forEach(function(item){
-        var row = document.createElement('div');
-        row.className = 'm-item';
+        var row = document.createElement('div'); row.className='m-item';
         var em = item.e || '🍽️';
-        var desc = item.d ? '<div class="m-item-desc">'+item.d+'</div>' : '';
-        row.innerHTML = '<div class="m-item-emoji">'+em+'</div>'
-          + '<div class="m-item-info"><div class="m-item-name">'+item.n+'</div>'+desc+'</div>'
-          + '<div class="m-item-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
-          + '<button class="m-add" onclick="addToMesaCart(\''+escStr(em)+'\',\''+escStr(item.n)+'\','+item.p+')">+</button>';
+        row.innerHTML='<div class="m-item-emoji">'+em+'</div>'
+          +'<div class="m-item-info"><div class="m-item-name">'+item.n+'</div>'+(item.d?'<div class="m-item-desc">'+item.d+'</div>':'')+'</div>'
+          +'<div class="m-item-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
+          +'<button class="m-add" onclick="addToMesaCart(\''+escStr(em)+'\',\''+escStr(item.n)+'\','+item.p+')">+</button>';
         panel.appendChild(row);
       });
     });
@@ -2132,13 +2215,10 @@ function renderMesaMenu() {
 function addToMesaCart(emoji, nome, preco) {
   mesaCartItems.push({ emoji: emoji, nome: nome, preco: parseFloat(preco) });
   renderMesaCart();
-  showToast('➕ ' + nome + ' adicionado');
+  showToast('➕ ' + nome);
 }
 
-function removeFromMesaCart(idx) {
-  mesaCartItems.splice(idx, 1);
-  renderMesaCart();
-}
+function removeFromMesaCart(idx) { mesaCartItems.splice(idx, 1); renderMesaCart(); }
 
 function renderMesaCart() {
   var listEl = document.getElementById('mesa-cart-items');
@@ -2146,18 +2226,15 @@ function renderMesaCart() {
   var sendBtn = document.getElementById('mesa-send-btn');
   listEl.innerHTML = '';
   var total = 0;
-
   if (mesaCartItems.length === 0) {
-    listEl.innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--txt2);font-size:.75rem;">Nenhum item adicionado</div>';
+    listEl.innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--txt2);font-size:.75rem;">Nenhum item</div>';
   } else {
     mesaCartItems.forEach(function(item, idx){
       total += item.preco;
-      var row = document.createElement('div');
-      row.className = 'm-cart-row';
-      row.innerHTML = '<span class="m-cr-em">'+item.emoji+'</span>'
-        + '<span class="m-cr-name">'+item.nome+'</span>'
-        + '<span class="m-cr-price">R$ '+item.preco.toFixed(2).replace('.',',')+'</span>'
-        + '<button class="m-cr-del" onclick="removeFromMesaCart('+idx+')">✕</button>';
+      var row = document.createElement('div'); row.className='m-cart-row';
+      row.innerHTML='<span class="m-cr-em">'+item.emoji+'</span><span class="m-cr-name">'+item.nome+'</span>'
+        +'<span class="m-cr-price">R$ '+item.preco.toFixed(2).replace('.',',')+'</span>'
+        +'<button class="m-cr-del" onclick="removeFromMesaCart('+idx+')">✕</button>';
       listEl.appendChild(row);
     });
   }
@@ -2169,161 +2246,185 @@ async function enviarPedidoMesa() {
   if (mesaCartItems.length === 0) return;
   var num = mesaAtual;
   var sendBtn = document.getElementById('mesa-send-btn');
-  sendBtn.disabled = true;
-  sendBtn.textContent = '⏳ Enviando...';
-
+  sendBtn.disabled = true; sendBtn.textContent = '⏳ Enviando...';
   try {
-    var now = new Date();
+    var now  = new Date();
     var hora = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
     var total = mesaCartItems.reduce(function(s,i){ return s + i.preco; }, 0);
-    var itensArr = mesaCartItems.map(function(i){
-      return { emoji: i.emoji, name: i.nome, price: i.preco, qty: 1, category: 'mesa' };
-    });
+    var itensArr = mesaCartItems.map(function(i){ return { emoji:i.emoji, name:i.nome, price:i.preco, qty:1, category:'mesa' }; });
 
-    // Cria pedido na fila kanban
-    var pedidoPayload = {
-      cliente: 'Mesa ' + String(num).padStart(2,'0'),
-      telefone: '',
-      endereco: 'Atendimento presencial',
-      entrega: 'Mesa ' + String(num).padStart(2,'0'),
-      pagamento: 'mesa',
-      troco: '',
-      itens: itensArr,
-      total: total,
-      taxa: 0,
-      status: 'recebido',
-      hora: hora,
-      nota: 'Pedido de mesa presencial'
-    };
-
-    var { data: pedRow, error: pedErr } = await SUPA.from('pedidos_skali').insert([pedidoPayload]).select().single();
+    var { data: pedRow, error: pedErr } = await SUPA.from('pedidos_skali').insert([{
+      cliente:'Mesa '+String(num).padStart(2,'0'), telefone:'',
+      endereco:'Atendimento presencial',
+      entrega:'Mesa '+String(num).padStart(2,'0'),
+      pagamento:'mesa', troco:'', itens:itensArr,
+      total:total, taxa:0, status:'recebido', hora:hora, nota:'Pedido presencial'
+    }]).select().single();
     if (pedErr) throw pedErr;
-    var pedidoId = pedRow ? String(pedRow.id) : '';
 
-    // Salva itens na comanda
-    var itensInsert = mesaCartItems.map(function(i){
-      return {
-        mesa_numero: num,
-        item_nome: i.nome,
-        item_preco: i.preco,
-        emoji: i.emoji,
-        status_pagamento: 'pendente',
-        pedido_id: pedidoId
-      };
-    });
-    var { data: novosItens, error: itErr } = await SUPA.from('itens_comanda_skali').insert(itensInsert).select();
+    var pedidoId = pedRow ? String(pedRow.id) : '';
+    var ins = mesaCartItems.map(function(i){ return { mesa_numero:num, item_nome:i.nome, item_preco:i.preco, emoji:i.emoji, status_pagamento:'pendente', pedido_id:pedidoId }; });
+    var { data: novos, error: itErr } = await SUPA.from('itens_comanda_skali').insert(ins).select();
     if (itErr) throw itErr;
 
-    // Atualiza status da mesa para 'ocupada' se era livre
     if ((mesaStatusGlobais[num] || 'livre') === 'livre') {
-      await SUPA.from('mesas_skali').update({ status: 'ocupada', aberta_em: now.toISOString() }).eq('numero', num);
+      await SUPA.from('mesas_skali').update({ status:'ocupada', aberta_em:now.toISOString() }).eq('numero', num);
       mesaStatusGlobais[num] = 'ocupada';
     }
-
-    // Atualiza estado local
     if (!mesaItensGlobais[num]) mesaItensGlobais[num] = [];
-    if (novosItens) {
-      novosItens.forEach(function(it){ mesaItensGlobais[num].push(it); });
-    } else {
-      itensInsert.forEach(function(it, idx){
-        mesaItensGlobais[num].push(Object.assign({}, it, { id: Date.now() + idx, criado_em: now.toISOString() }));
-      });
-    }
+    (novos || ins.map(function(it,idx){ return Object.assign({},it,{id:Date.now()+idx,criado_em:now.toISOString()}); }))
+      .forEach(function(it){ mesaItensGlobais[num].push(it); });
 
-    showToast('✅ Pedido enviado para a cozinha!');
+    showToast('✅ Pedido enviado para cozinha!');
     closeMesaModal();
     renderMesas();
-
   } catch(e) {
-    console.error('Erro ao enviar pedido de mesa:', e);
-    var msg = e && e.message ? e.message : String(e);
-    if (msg.indexOf('mesas_skali') !== -1 || msg.indexOf('itens_comanda') !== -1) {
-      showToast('⚠️ Crie as tabelas no Supabase primeiro!');
-    } else {
-      showToast('❌ Erro ao enviar pedido');
-    }
-    sendBtn.disabled = false;
-    sendBtn.textContent = '✅ Enviar para Cozinha';
+    console.error(e);
+    showToast('❌ ' + (e && e.message ? e.message : 'Erro ao enviar'));
+    sendBtn.disabled = false; sendBtn.textContent = '✅ Enviar para Cozinha';
   }
 }
 
-// ── MODAL COMANDA ──────────────────────────────────────────
+// ── COMANDA FULL-SCREEN ────────────────────────────────────
 function abrirComandaModal(num) {
   mesaAtual = num;
-  document.getElementById('comanda-modal-title').textContent = '🧾 COMANDA — MESA ' + String(num).padStart(2,'0');
-  renderComanda(num);
+  var status = mesaStatusGlobais[num] || 'livre';
+  var chipEl = document.getElementById('cmd-schip');
+  document.getElementById('cmd-mesa-lbl').textContent = '🪑 MESA ' + String(num).padStart(2,'0');
+  if (chipEl) {
+    chipEl.textContent = status === 'conta' ? '🔴 Conta Pedida' : '🟡 Ocupada';
+    chipEl.className   = 'cmd-schip ' + (status === 'conta' ? 'conta' : 'ocupada');
+  }
+  renderComandaCards(num);
+  renderComandaBill(num);
   document.getElementById('comanda-overlay').classList.add('open');
 }
 
 function closeComandaModal() {
   document.getElementById('comanda-overlay').classList.remove('open');
+  renderMesas();
 }
 
-function renderComanda(num) {
-  var body = document.getElementById('comanda-body');
+function renderComandaCards(num) {
+  var grid = document.getElementById('cprod-grid');
+  if (!grid) return;
   var itens = mesaItensGlobais[num] || [];
-  var pendentes = itens.filter(function(i){ return i.status_pagamento === 'pendente'; });
-  var pagos = itens.filter(function(i){ return i.status_pagamento === 'pago'; });
-  var totPend = pendentes.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
-  var totPago = pagos.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+  if (itens.length === 0) {
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--txt2);">Nenhum item lançado nesta mesa ainda.<br><small>Os pedidos do tablet aparecerão aqui em tempo real.</small></div>';
+    return;
+  }
+  grid.innerHTML = '';
+  itens.forEach(function(it) {
+    var isPago = it.status_pagamento === 'pago';
+    var hr = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+    var card = document.createElement('div');
+    card.className = 'cprod-card' + (isPago ? ' pago-card' : '');
+    card.setAttribute('data-id', it.id);
+    card.innerHTML = '<div class="cprod-top">'
+      + (isPago ? '<span style="font-size:.6rem;color:var(--green);font-weight:900;">✅PAGO</span>'
+                : '<input class="cprod-check" type="checkbox" onchange="onCardCheck(this)">')
+      + (isPago ? '' : '<button class="cprod-rm" onclick="removerItemComanda('+it.id+','+num+')" title="Remover">✕</button>')
+      + '</div>'
+      + '<div class="cprod-emoji">'+(it.emoji||'🍽️')+'</div>'
+      + '<div class="cprod-name">'+it.item_nome+'</div>'
+      + '<div class="cprod-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</div>'
+      + (hr ? '<span class="cprod-hr">'+hr+'</span>' : '');
+    grid.appendChild(card);
+  });
+}
+
+function onCardCheck(checkbox) {
+  var card = checkbox.closest('.cprod-card');
+  if (checkbox.checked) {
+    card.classList.add('sel');
+  } else {
+    card.classList.remove('sel');
+  }
+  renderComandaBill(mesaAtual);
+}
+
+function renderComandaBill(num) {
+  var rowsEl   = document.getElementById('cmd-bill-rows');
+  var totalsEl = document.getElementById('cmd-totals-box');
+  if (!rowsEl || !totalsEl) return;
+
+  var itens    = mesaItensGlobais[num] || [];
+  var pendentes = itens.filter(function(it){ return it.status_pagamento === 'pendente'; });
+  var pagos     = itens.filter(function(it){ return it.status_pagamento === 'pago'; });
+
+  // Quais estão selecionados para fechar parcial
+  var selectedIds = [];
+  document.querySelectorAll('#cprod-grid .cprod-check:checked').forEach(function(cb){
+    var card = cb.closest('.cprod-card');
+    if (card) selectedIds.push(parseInt(card.getAttribute('data-id')));
+  });
+
+  var totPend = pendentes.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
+  var totPago = pagos.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
+  var totSel  = pendentes.filter(function(i){ return selectedIds.indexOf(i.id)!==-1; }).reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
   var totGeral = totPend + totPago;
 
-  var html = '';
-
-  if (pendentes.length === 0 && pagos.length === 0) {
-    html = '<div style="text-align:center;padding:30px;color:var(--txt2);">Nenhum item na comanda</div>';
-  } else {
-    if (pendentes.length > 0) {
-      html += '<div style="font-size:.63rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Em Aberto — selecione para fechar parcial</div>';
-      pendentes.forEach(function(it){
-        var hr = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
-        html += '<div class="cmd-item">'
-          + '<input class="cmd-check" type="checkbox" data-id="'+it.id+'" data-preco="'+it.item_preco+'">'
-          + '<span class="cmd-em">'+(it.emoji||'🍽️')+'</span>'
-          + '<span class="cmd-name">'+it.item_nome+'</span>'
-          + (hr ? '<span class="cmd-time">'+hr+'</span>' : '')
-          + '<span class="cmd-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span>'
-          + '</div>';
-      });
-    }
-    if (pagos.length > 0) {
-      html += '<div style="font-size:.63rem;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px;">✅ Já Pago</div>';
-      pagos.forEach(function(it){
-        html += '<div class="cmd-item pago">'
-          + '<span class="cmd-em">'+(it.emoji||'🍽️')+'</span>'
-          + '<span class="cmd-name">'+it.item_nome+'<span class="cmd-badge-pago">PAGO</span></span>'
-          + '<span class="cmd-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span>'
-          + '</div>';
-      });
-    }
+  var rowsHtml = '';
+  if (pendentes.length > 0) {
+    rowsHtml += '<div style="font-size:.58rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;padding:8px 0 4px;">Em Aberto</div>';
+    pendentes.forEach(function(it){
+      var isSel = selectedIds.indexOf(it.id) !== -1;
+      rowsHtml += '<div class="cmd-brow'+(isSel?' sel-row':'')+'"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></div>';
+    });
   }
+  if (pagos.length > 0) {
+    rowsHtml += '<div style="font-size:.58rem;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;padding:10px 0 4px;">✅ Já Pagos</div>';
+    pagos.forEach(function(it){
+      rowsHtml += '<div class="cmd-brow pago-brow"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></div>';
+    });
+  }
+  rowsEl.innerHTML = rowsHtml || '<div style="text-align:center;padding:20px;color:var(--txt2);font-size:.75rem;">Vazio</div>';
 
-  html += '<div class="cmd-totals">'
-    + (pagos.length > 0 ? '<div class="cmd-tr"><span>Já pago</span><span style="color:var(--green)">R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>' : '')
-    + '<div class="cmd-tr"><span>Em aberto</span><span>R$ '+totPend.toFixed(2).replace('.',',')+'</span></div>'
-    + '<div class="cmd-tr total"><span>TOTAL GERAL</span><span>R$ '+totGeral.toFixed(2).replace('.',',')+'</span></div>'
-    + '</div>';
+  var totHtml = '';
+  if (pagos.length > 0)    totHtml += '<div class="cmd-trow pago-total"><span>Já pago</span><span>R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>';
+  if (totSel > 0)           totHtml += '<div class="cmd-trow sel-total"><span>Selecionado</span><span>R$ '+totSel.toFixed(2).replace('.',',')+'</span></div>';
+  totHtml += '<div class="cmd-trow"><span>Em aberto</span><span>R$ '+totPend.toFixed(2).replace('.',',')+'</span></div>';
+  totHtml += '<div class="cmd-trow grand"><span>TOTAL GERAL</span><span>R$ '+totGeral.toFixed(2).replace('.',',')+'</span></div>';
+  totalsEl.innerHTML = totHtml;
 
-  body.innerHTML = html;
+  var hintEl   = document.getElementById('cmd-hint-box');
+  var partBtn  = document.getElementById('cmd-btn-partial');
+  if (selectedIds.length > 0) {
+    if (hintEl)  hintEl.textContent = selectedIds.length + ' item(s) selecionado(s) — R$ ' + totSel.toFixed(2).replace('.',',');
+    if (partBtn) partBtn.disabled = false;
+  } else {
+    if (hintEl)  hintEl.textContent = '☑️ Marque os itens pagos na grade ao lado';
+    if (partBtn) partBtn.disabled = true;
+  }
+}
+
+async function removerItemComanda(itemId, num) {
+  if (!confirm('Remover este item da comanda?')) return;
+  try {
+    await SUPA.from('itens_comanda_skali').delete().eq('id', itemId);
+    mesaItensGlobais[num] = (mesaItensGlobais[num] || []).filter(function(it){ return it.id !== itemId; });
+    renderComandaCards(num);
+    renderComandaBill(num);
+    renderMesas();
+    showToast('🗑️ Item removido');
+  } catch(e) { showToast('❌ Erro ao remover item'); }
 }
 
 async function fecharParcial() {
-  var checks = document.querySelectorAll('#comanda-body .cmd-check:checked');
+  var checks = document.querySelectorAll('#cprod-grid .cprod-check:checked');
   if (checks.length === 0) { showToast('⚠️ Selecione os itens a pagar'); return; }
-
-  var ids = Array.from(checks).map(function(c){ return parseInt(c.getAttribute('data-id')); });
-  var total = Array.from(checks).reduce(function(s,c){ return s + parseFloat(c.getAttribute('data-preco')||0); }, 0);
-
+  var ids   = Array.from(checks).map(function(cb){ return parseInt(cb.closest('.cprod-card').getAttribute('data-id')); });
+  var total = 0;
+  ids.forEach(function(id){
+    var it = (mesaItensGlobais[mesaAtual]||[]).find(function(x){ return x.id===id; });
+    if (it) total += parseFloat(it.item_preco||0);
+  });
   try {
-    await SUPA.from('itens_comanda_skali').update({ status_pagamento: 'pago' }).in('id', ids);
-    var num = mesaAtual;
-    if (mesaItensGlobais[num]) {
-      mesaItensGlobais[num].forEach(function(it){
-        if (ids.indexOf(it.id) !== -1) it.status_pagamento = 'pago';
-      });
-    }
-    showToast('✅ Parcial: R$ ' + total.toFixed(2).replace('.',',') + ' registrado');
-    renderComanda(num);
+    await SUPA.from('itens_comanda_skali').update({ status_pagamento:'pago' }).in('id', ids);
+    (mesaItensGlobais[mesaAtual]||[]).forEach(function(it){ if (ids.indexOf(it.id)!==-1) it.status_pagamento='pago'; });
+    showToast('✅ Parcial: R$ '+total.toFixed(2).replace('.',','));
+    renderComandaCards(mesaAtual);
+    renderComandaBill(mesaAtual);
     renderMesas();
   } catch(e) { showToast('❌ Erro ao registrar pagamento'); }
 }
@@ -2331,31 +2432,69 @@ async function fecharParcial() {
 async function pedirContaMesa() {
   var num = mesaAtual;
   try {
-    await SUPA.from('mesas_skali').update({ status: 'conta' }).eq('numero', num);
+    await SUPA.from('mesas_skali').update({ status:'conta' }).eq('numero', num);
     mesaStatusGlobais[num] = 'conta';
-    showToast('📋 Conta pedida na Mesa ' + String(num).padStart(2,'0'));
+    var chipEl = document.getElementById('cmd-schip');
+    if (chipEl) { chipEl.textContent='🔴 Conta Pedida'; chipEl.className='cmd-schip conta'; }
+    showToast('📋 Conta pedida na Mesa '+String(num).padStart(2,'0'));
     renderMesas();
-    renderComanda(num);
-  } catch(e) { showToast('❌ Erro ao atualizar status'); }
+  } catch(e) { showToast('❌ Erro'); }
 }
 
 async function fecharMesaTotal() {
-  var num = mesaAtual;
-  var itens = mesaItensGlobais[num] || [];
-  var pendentes = itens.filter(function(i){ return i.status_pagamento === 'pendente'; });
-
+  var num    = mesaAtual;
+  var itens  = mesaItensGlobais[num] || [];
+  var pends  = itens.filter(function(i){ return i.status_pagamento==='pendente'; });
   try {
-    if (pendentes.length > 0) {
-      var ids = pendentes.map(function(i){ return i.id; });
-      await SUPA.from('itens_comanda_skali').update({ status_pagamento: 'pago' }).in('id', ids);
+    if (pends.length > 0) {
+      await SUPA.from('itens_comanda_skali').update({ status_pagamento:'pago' }).in('id', pends.map(function(i){ return i.id; }));
     }
-    await SUPA.from('mesas_skali').update({ status: 'livre', fechada_em: new Date().toISOString() }).eq('numero', num);
+    await SUPA.from('mesas_skali').update({ status:'livre', fechada_em:new Date().toISOString() }).eq('numero', num);
     mesaStatusGlobais[num] = 'livre';
-    mesaItensGlobais[num] = [];
-    showToast('✅ Mesa ' + String(num).padStart(2,'0') + ' fechada com sucesso!');
+    mesaItensGlobais[num]  = [];
+    showToast('✅ Mesa '+String(num).padStart(2,'0')+' fechada!');
     closeComandaModal();
     renderMesas();
   } catch(e) { showToast('❌ Erro ao fechar mesa'); }
+}
+
+function printCupomMesa() {
+  var num   = mesaAtual;
+  var itens = mesaItensGlobais[num] || [];
+  var now   = new Date();
+  var hr    = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  var data  = now.toLocaleDateString('pt-BR');
+
+  var pends = itens.filter(function(i){ return i.status_pagamento==='pendente'; });
+  var pagos = itens.filter(function(i){ return i.status_pagamento==='pago'; });
+  var totPend = pends.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
+  var totPago = pagos.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
+  var totGeral = totPend + totPago;
+
+  var rows = '';
+  itens.forEach(function(it){
+    var p = parseFloat(it.item_preco||0).toFixed(2).replace('.',',');
+    var pago = it.status_pagamento==='pago' ? ' ✅' : '';
+    rows += '<div class="comanda-row"><span>'+(it.emoji||'')+' '+it.item_nome+pago+'</span><span>R$ '+p+'</span></div>';
+  });
+
+  var html = '<div class="comanda">'
+    + '<h1>Skali Burg\'s</h1>'
+    + '<h2>Mesa '+String(num).padStart(2,'0')+'</h2>'
+    + '<div class="comanda-row"><span>Data</span><span>'+data+'</span></div>'
+    + '<div class="comanda-row"><span>Hora</span><span>'+hr+'</span></div>'
+    + '<div class="comanda-divider"></div>'
+    + rows
+    + '<div class="comanda-divider"></div>'
+    + (pagos.length>0?'<div class="comanda-row"><span>Já pago</span><span>R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>':'')
+    + '<div class="comanda-row"><span><strong>EM ABERTO</strong></span><span><strong>R$ '+totPend.toFixed(2).replace('.',',')+'</strong></span></div>'
+    + '<div class="comanda-row"><span><strong>TOTAL GERAL</strong></span><span><strong>R$ '+totGeral.toFixed(2).replace('.',',')+'</strong></span></div>'
+    + '<div class="comanda-footer">Obrigado pela preferência!<br>Skali Burg\'s</div>'
+    + '</div>';
+
+  var pt = document.getElementById('print-target');
+  pt.innerHTML = html;
+  window.print();
 }
 
 // ── ZERÉSIMA ──────────────────────────────────────────────
@@ -2363,59 +2502,35 @@ async function showZeresima() {
   document.getElementById('zer-overlay').classList.add('open');
   var body = document.getElementById('zer-body');
   body.innerHTML = '<div style="text-align:center;padding:24px;color:var(--txt2);">⏳ Carregando...</div>';
-
   try {
     var hoje = new Date().toISOString().split('T')[0];
     var { data: itens, error } = await SUPA.from('itens_comanda_skali')
-      .select('*').gte('criado_em', hoje + 'T00:00:00').order('mesa_numero');
-
+      .select('*').gte('criado_em', hoje+'T00:00:00').order('mesa_numero');
     if (error) throw error;
-
     if (!itens || itens.length === 0) {
-      body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--txt2);">Nenhum consumo registrado hoje</div>';
+      body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--txt2);">Nenhum consumo hoje</div>';
       return;
     }
-
     var byMesa = {};
-    itens.forEach(function(it){
-      var m = it.mesa_numero;
-      if (!byMesa[m]) byMesa[m] = [];
-      byMesa[m].push(it);
-    });
-
-    var totalGeral = itens.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+    itens.forEach(function(it){ if (!byMesa[it.mesa_numero]) byMesa[it.mesa_numero]=[]; byMesa[it.mesa_numero].push(it); });
+    var totalGeral = itens.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
     var html = '';
-
     Object.keys(byMesa).sort(function(a,b){ return parseInt(a)-parseInt(b); }).forEach(function(m){
-      var mItens = byMesa[m];
-      var totMesa = mItens.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
-      html += '<div class="zer-mesa-card">'
-        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
-        + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;">MESA ' + String(m).padStart(2,'0') + '</span>'
-        + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:.95rem;color:var(--am);">R$ ' + totMesa.toFixed(2).replace('.',',') + '</span>'
-        + '</div>';
-      mItens.forEach(function(it){
-        var hr = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
-        var pago = it.status_pagamento === 'pago';
-        html += '<div class="zer-item">'
-          + '<span>'+(it.emoji||'🍽️')+' '+it.item_nome+(pago?' <span style="color:var(--green);font-size:.6rem;">✅</span>':'')+'</span>'
-          + '<span style="display:flex;gap:8px;align-items:center;">'
-          + (hr ? '<span style="font-size:.6rem;color:var(--txt2);">'+hr+'</span>' : '')
-          + '<span>R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></span>'
-          + '</div>';
+      var mi    = byMesa[m];
+      var totM  = mi.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
+      html += '<div class="zer-mesa-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;"><span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;">MESA '+String(m).padStart(2,'0')+'</span><span style="font-family:\'Bebas Neue\',sans-serif;font-size:.95rem;color:var(--am);">R$ '+totM.toFixed(2).replace('.',',')+'</span></div>';
+      mi.forEach(function(it){
+        var hr   = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+        var pago = it.status_pagamento==='pago';
+        html += '<div class="zer-item"><span>'+(it.emoji||'🍽️')+' '+it.item_nome+(pago?' ✅':'')+'</span><span style="display:flex;gap:8px;align-items:center;">'+(hr?'<span style="font-size:.6rem;color:var(--txt2);">'+hr+'</span>':'')+'<span>R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></span></div>';
       });
       html += '</div>';
     });
-
-    html += '<div class="zer-total-box">'
-      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:var(--am);letter-spacing:2px;">TOTAL DO TURNO</div>'
-      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.4rem;color:var(--am);">R$ '+totalGeral.toFixed(2).replace('.',',')+'</div>'
-      + '</div>';
-
+    html += '<div class="zer-total-box"><div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:var(--am);letter-spacing:2px;">TOTAL DO TURNO</div><div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.4rem;color:var(--am);">R$ '+totalGeral.toFixed(2).replace('.',',')+'</div></div>';
     body.innerHTML = html;
   } catch(e) {
-    console.error('Zerésima erro:', e);
-    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--red);font-size:.8rem;">❌ Erro ao carregar dados.<br>Verifique se as tabelas Supabase foram criadas.</div>';
+    console.error(e);
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--red);font-size:.8rem;">❌ Erro ao carregar. As tabelas foram criadas no Supabase?</div>';
   }
 }
 

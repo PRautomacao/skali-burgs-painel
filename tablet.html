@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Skali Burg's — Tablet</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --am:#F5C400;--am2:#FFD740;--az:#1A1A5E;
+  --bg:#0a0a20;--bg2:#0f0f2e;--bg3:#161640;--card:#1a1a48;
+  --border:rgba(245,196,0,0.18);--txt:#e8e8f0;--txt2:rgba(232,232,240,0.55);
+  --green:#22c55e;--red:#ef4444;--orange:#f97316;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color:var(--txt);overflow:hidden;}
+.screen{position:fixed;inset:0;display:none;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* ── TELA INICIAL (seleção de mesa) ── */
+#sc-mesa{background:var(--bg);align-items:center;justify-content:flex-start;}
+.mesa-top{background:var(--bg2);border-bottom:2px solid var(--border);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;width:100%;flex-shrink:0;}
+.mesa-brand{font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--am);letter-spacing:3px;}
+.mesa-sub{font-size:.65rem;color:var(--txt2);font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+.mesa-grid-wrap{flex:1;overflow-y:auto;padding:16px;}
+.mesa-grid-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--txt2);letter-spacing:2px;margin-bottom:14px;}
+.mesa-sel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:12px;}
+.mesa-sel-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:14px 8px;cursor:pointer;transition:all .15s;text-align:center;user-select:none;}
+.mesa-sel-card:active{transform:scale(.96);}
+.mesa-sel-card.livre{border-color:rgba(34,197,94,.3);}
+.mesa-sel-card.ocupada{border-color:rgba(249,115,22,.4);}
+.msn{font-family:'Bebas Neue',sans-serif;font-size:2rem;line-height:1;}
+.mesa-sel-card.livre .msn{color:var(--green);}
+.mesa-sel-card.ocupada .msn{color:var(--orange);}
+.msl{font-size:.58rem;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;}
+.mesa-sel-card.livre .msl{color:rgba(34,197,94,.6);}
+.mesa-sel-card.ocupada .msl{color:rgba(249,115,22,.7);}
+
+/* ── TELA DE PEDIDO ── */
+#sc-pedido{display:none;flex-direction:column;background:var(--bg);}
+#sc-pedido.active{display:flex;}
+.pedido-topbar{background:var(--bg2);border-bottom:2px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.ped-back{background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);border-radius:10px;padding:7px 12px;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;}
+.ped-back:active{background:rgba(245,196,0,.1);color:var(--am);}
+.ped-title{font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--am);letter-spacing:2px;flex:1;}
+.cart-bubble{background:var(--am);color:var(--az);border-radius:20px;padding:5px 14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;white-space:nowrap;}
+.cart-bubble:active{background:var(--am2);}
+.pedido-body{display:flex;flex:1;overflow:hidden;}
+
+/* Menu esquerdo */
+.ped-menu{flex:1;overflow-y:auto;padding:10px;}
+.ped-cats{display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:10px;scrollbar-width:none;}
+.ped-cats::-webkit-scrollbar{display:none;}
+.ped-cat-btn{flex-shrink:0;padding:6px 12px;border:1.5px solid var(--border);border-radius:20px;background:transparent;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:800;font-size:.65rem;cursor:pointer;text-transform:uppercase;white-space:nowrap;}
+.ped-cat-btn.active{background:var(--am);color:var(--az);border-color:var(--am);}
+.ped-sec{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--am);letter-spacing:2px;background:rgba(245,196,0,.07);border-left:3px solid var(--am);padding:5px 10px;border-radius:0 6px 6px 0;margin:8px 0;}
+.ped-item{display:flex;align-items:center;gap:10px;padding:10px 6px;border-radius:10px;border:1px solid transparent;transition:all .15s;cursor:pointer;}
+.ped-item:active{background:rgba(245,196,0,.08);border-color:rgba(245,196,0,.2);}
+.pi-em{font-size:1.6rem;flex-shrink:0;width:36px;text-align:center;}
+.pi-info{flex:1;}
+.pi-name{font-weight:900;font-size:.82rem;color:var(--txt);}
+.pi-desc{font-size:.62rem;color:var(--txt2);font-weight:700;margin-top:1px;}
+.pi-price{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);flex-shrink:0;}
+.pi-add{background:var(--am);border:none;border-radius:10px;width:32px;height:32px;color:var(--az);font-size:1.2rem;font-weight:900;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.pi-add:active{background:var(--am2);transform:scale(.95);}
+
+/* Carrinho direito (desktop) */
+.ped-cart{width:250px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
+@media(max-width:640px){.ped-cart{display:none;}}
+.cart-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--am);letter-spacing:2px;padding:12px 14px;border-bottom:1px solid var(--border);}
+.cart-list{flex:1;overflow-y:auto;padding:6px 14px;}
+.cart-row{display:flex;align-items:center;gap:6px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.cr-em{font-size:.95rem;flex-shrink:0;}
+.cr-name{flex:1;font-size:.68rem;font-weight:800;line-height:1.3;}
+.cr-price{font-family:'Bebas Neue',sans-serif;font-size:.8rem;color:var(--am);}
+.cr-del{background:none;border:none;color:rgba(239,68,68,.45);cursor:pointer;font-size:.8rem;padding:2px;}
+.cr-del:hover{color:var(--red);}
+.cart-total-row{border-top:1px solid var(--border);padding:10px 14px;display:flex;justify-content:space-between;font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);}
+.cart-send-btn{margin:0 14px 14px;padding:12px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.88rem;color:var(--az);cursor:pointer;transition:all .2s;}
+.cart-send-btn:disabled{opacity:.4;cursor:not-allowed;}
+.cart-send-btn:not(:disabled):active{transform:scale(.98);}
+
+/* Tela de carrinho mobile */
+#sc-cart{background:var(--bg);}
+.cart-mob-top{background:var(--bg2);border-bottom:2px solid var(--border);padding:10px 14px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.cart-mob-items{flex:1;overflow-y:auto;padding:10px 14px;}
+.cart-mob-row{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);}
+.cmr-em{font-size:1.2rem;flex-shrink:0;}
+.cmr-name{flex:1;font-size:.8rem;font-weight:800;}
+.cmr-qty{display:flex;align-items:center;gap:6px;}
+.cmr-qbtn{background:rgba(255,255,255,.1);border:none;border-radius:6px;width:26px;height:26px;color:var(--txt);font-weight:900;cursor:pointer;font-size:.85rem;}
+.cmr-qbtn:active{background:rgba(245,196,0,.2);}
+.cmr-qn{font-size:.8rem;font-weight:900;min-width:16px;text-align:center;}
+.cmr-price{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--am);flex-shrink:0;}
+.cart-mob-footer{padding:14px;border-top:2px solid var(--border);background:var(--bg2);}
+.cart-mob-total{display:flex;justify-content:space-between;font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);margin-bottom:12px;}
+.cart-mob-send{width:100%;padding:14px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;color:var(--az);cursor:pointer;}
+.cart-mob-send:disabled{opacity:.4;}
+.cart-mob-send:not(:disabled):active{transform:scale(.98);}
+
+/* Toast / confirmação */
+.tablet-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--am);color:var(--az);padding:12px 24px;border-radius:14px;font-weight:900;font-size:.85rem;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
+.tablet-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* Confirmação de envio */
+#sc-confirm{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:18px;padding:30px;}
+.confirm-icon{font-size:4rem;}
+.confirm-title{font-family:'Bebas Neue',sans-serif;font-size:1.8rem;color:var(--am);letter-spacing:3px;text-align:center;}
+.confirm-sub{font-size:.85rem;color:var(--txt2);font-weight:700;text-align:center;}
+.confirm-btn{padding:13px 32px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.95rem;color:var(--az);cursor:pointer;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+const SUPA = window.supabase.createClient(
+  'https://hbgnqmyvbzkkcxhwzakg.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhiZ25xbXl2Ynpra2N4aHd6YWtnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1NzE3MTcsImV4cCI6MjA4ODE0NzcxN30.f8cB1T5W4FgaRk489vBjj7o_XuCvquTTW-KjX3g0XeU'
+);
+</script>
+</head>
+<body>
+
+<!-- ── TELA 1: Selecionar Mesa ── -->
+<div class="screen active" id="sc-mesa">
+  <div class="mesa-top">
+    <div>
+      <div class="mesa-brand">Skali Burg's</div>
+      <div class="mesa-sub">Tablet de Atendimento</div>
+    </div>
+  </div>
+  <div class="mesa-grid-wrap">
+    <div class="mesa-grid-title">SELECIONE A MESA</div>
+    <div class="mesa-sel-grid" id="mesa-sel-grid"></div>
+  </div>
+</div>
+
+<!-- ── TELA 2: Menu + Carrinho ── -->
+<div class="screen" id="sc-pedido">
+  <div class="pedido-topbar">
+    <button class="ped-back" onclick="irParaMesas()">◀ Mesas</button>
+    <div class="ped-title" id="ped-title">🪑 MESA 01</div>
+    <button class="cart-bubble" onclick="irParaCarrinho()" id="cart-bubble">🛒 0 itens</button>
+  </div>
+  <div class="pedido-body">
+    <div class="ped-menu" id="ped-menu">
+      <div class="ped-cats" id="ped-cats"></div>
+      <div id="ped-items"></div>
+    </div>
+    <div class="ped-cart">
+      <div class="cart-title">🛒 CARRINHO</div>
+      <div class="cart-list" id="cart-list-desk"></div>
+      <div class="cart-total-row"><span>TOTAL</span><span id="cart-total-desk">R$ 0,00</span></div>
+      <button class="cart-send-btn" id="cart-send-desk" onclick="enviarPedido()" disabled>✅ Enviar para Cozinha</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TELA 3: Carrinho Mobile ── -->
+<div class="screen" id="sc-cart">
+  <div class="cart-mob-top">
+    <button class="ped-back" onclick="irParaMenu()">◀ Menu</button>
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);letter-spacing:2px;flex:1;">🛒 CARRINHO</span>
+    <span id="mesa-lbl-cart" style="font-size:.72rem;font-weight:800;color:var(--txt2);"></span>
+  </div>
+  <div class="cart-mob-items" id="cart-mob-items"></div>
+  <div class="cart-mob-footer">
+    <div class="cart-mob-total"><span>TOTAL</span><span id="cart-total-mob">R$ 0,00</span></div>
+    <button class="cart-mob-send" id="cart-send-mob" onclick="enviarPedido()" disabled>✅ Enviar para Cozinha</button>
+  </div>
+</div>
+
+<!-- ── TELA 4: Confirmação ── -->
+<div class="screen" id="sc-confirm">
+  <div class="confirm-icon">✅</div>
+  <div class="confirm-title">PEDIDO ENVIADO!</div>
+  <div class="confirm-sub" id="confirm-sub">Mesa 01 · 0 itens · R$ 0,00</div>
+  <button class="confirm-btn" onclick="irParaMesas()">Nova Mesa</button>
+</div>
+
+<div class="tablet-toast" id="tb-toast"></div>
+
+<script>
+/* ── MENU (mesmo do painel) ── */
+var MENU=[
+  {id:"sanduiches",icon:"🥪",title:"Sanduíches",subs:[{title:null,items:[
+    {e:"🌭",n:"Big Dog",d:"Pão, salsicha, queijo e batata",p:11},
+    {e:"🥪",n:"Bauru",d:"Pão, presunto, queijo e tomate",p:11},
+    {e:"🥪",n:"Misto",d:"Pão, presunto e queijo",p:11},
+    {e:"🍔",n:"Burg",d:"Pão, hambúrguer, queijo, alface, tomate, batata e milho",p:18},
+    {e:"🍗",n:"Frango",d:"Pão, frango, queijo, alface, tomate, milho e batata",p:18},
+    {e:"🍔",n:"Mac",d:"Pão, hambúrguer, queijo, bacon, alface, tomate, milho e batata",p:22},
+    {e:"🌽",n:"Milho Verde",d:"Pão, hambúrguer, queijo, salsicha, alface, tomate, milho e batata",p:22},
+    {e:"🥓",n:"Bacon",d:"Pão, hambúrguer, queijo, bacon, ovo, alface, tomate, milho e batata",p:24},
+    {e:"🍗",n:"Frango Especial",d:"Pão, frango, queijo, ovo, bacon, alface, tomate, milho e batata",p:24},
+    {e:"🍔",n:"Super Americano",d:"Pão, hambúrguer, queijo, ovo, presunto, alface, tomate, milho e batata",p:24},
+    {e:"🥩",n:"Filé Bacon",d:"Pão, filé, queijo, bacon, alface, tomate, milho e batata",p:25},
+    {e:"🌶️",n:"Calabresa",d:"Pão, filé, queijo, calabresa, abacaxi, alface, tomate, batata e milho",p:26.5},
+    {e:"🥩",n:"Nífico",d:"Pão, filé, queijo, ovo, requeijão, alface, tomate, milho e batata",p:27},
+    {e:"💥",n:"Bagunça",d:"Pão, hambúrguer, queijo, bacon, ovo, salsicha, alface, tomate, batata e milho",p:27},
+    {e:"🍔",n:"Duplo",d:"Pão, 2 hambúrgueres, queijo, bacon, alface, tomate, milho e batata",p:28.5},
+    {e:"🌟",n:"Tudo",d:"Pão, hambúrguer, queijo, ovo, bacon, salsicha, presunto, alface, tomate, milho e batata",p:30},
+    {e:"🍗",n:"Tudo Frango",d:"Pão, frango, queijo, ovo, bacon, salsicha, presunto...",p:30},
+    {e:"🐷",n:"Tudo Lombo",d:"Pão, lombo, queijo, ovo, bacon, salsicha, presunto...",p:30},
+    {e:"🥩",n:"Lombo Mineira",d:"Pão, lombo, hambúrguer, queijo, ovo, cebola...",p:32},
+    {e:"🥩",n:"Tudo Filé",d:"Pão, filé, queijo, ovo, bacon, salsicha, presunto...",p:33},
+    {e:"🥩",n:"Filé Mineira",d:"Pão, filé, hambúrguer, queijo, ovo, cebola...",p:33.5},
+    {e:"🍗",n:"Frango Mineira",d:"Pão, frango, hambúrguer, queijo, ovo, cebola, bacon...",p:34},
+    {e:"👑",n:"Moda",d:"Hambúrguer, queijo, bacon, ovo, salsicha, presunto, calabresa...",p:41},
+    {e:"🏆",n:"Super Skali Burg's ⭐",d:"Hambúrguer, filé, lombo, frango, ovo, bacon, presunto...",p:60}
+  ]}]},
+  {id:"porcoes",icon:"🍟",title:"Porções",subs:[{title:null,items:[
+    {e:"🍟",n:"Batata Simples",d:"500g",p:24},
+    {e:"🧀",n:"Batata Completa",d:"500g · mussarela, bacon e cheddar",p:35},
+    {e:"🍗",n:"Coxinha da Asa",d:"12 unidades",p:34},
+    {e:"🍠",n:"Mandioca Frita",d:"500g",p:22},
+    {e:"🥩",n:"Disquinho Bovino",d:"15 unidades",p:35},
+    {e:"🐷",n:"Disquinho Suíno",d:"15 unidades",p:35},
+    {e:"🍗",n:"Tiras de Frango",d:"500g",p:35},
+    {e:"🌶️",n:"Torresminho Mexicano",d:"500g",p:35},
+    {e:"🌭",n:"Linguiça Gaúcha",d:"700g · mandioca, farofa e vinagrete",p:52}
+  ]}]},
+  {id:"grelhados",icon:"🔥",title:"Pratos",subs:[
+    {title:"🍽️ Pratos",items:[
+      {e:"🥩",n:"Strogonoff de Filé",d:"Arroz e batata palha",p:28.5},
+      {e:"🍗",n:"Strogonoff de Frango",d:"Arroz e batata palha",p:26.5},
+      {e:"🥩",n:"Filé com Fritas",d:"Arroz, batata frita e vinagrete",p:28.5},
+      {e:"🍳",n:"Omelete Especial",d:"Ovo, queijo, presunto, cebola, bacon, tomate",p:26}
+    ]},
+    {title:"🪵 Grelhados",items:[
+      {e:"🥩",n:"Fraldinha",d:"300g · arroz, feijão, vinagrete, mandioca",p:35},
+      {e:"🥩",n:"Contra Filé",d:"300g · arroz, feijão, vinagrete, mandioca",p:35},
+      {e:"👑",n:"Picanha ⭐",d:"300g · arroz, feijão, vinagrete, mandioca",p:43}
+    ]},
+    {title:"🪵 Tábuas",items:[
+      {e:"🥩",n:"Tábua de Fraldinha",d:"600g",p:75},
+      {e:"👑",n:"Tábua de Picanha ⭐",d:"600g",p:100}
+    ]}
+  ]},
+  {id:"bebidas",icon:"🍺",title:"Bebidas",subs:[
+    {title:"🍺 Cervejas 600ml",items:[
+      {e:"🍺",n:"Skol 600ml",d:"",p:11},
+      {e:"🍺",n:"Stella Artois 600ml",d:"",p:13.5},
+      {e:"🍺",n:"Spatten 600ml",d:"",p:13}
+    ]},
+    {title:"🍶 Long Neck",items:[
+      {e:"🍾",n:"Budweiser Long Neck",d:"",p:7.5},
+      {e:"🍾",n:"Corona Long Neck",d:"",p:10},
+      {e:"🍾",n:"Heineken Long Neck",d:"",p:10},
+      {e:"🍾",n:"Heineken Zero Long Neck",d:"",p:10}
+    ]},
+    {title:"🥫 Latas 269ml",items:[
+      {e:"🥫",n:"Antárctica Original",d:"269ml",p:5},
+      {e:"🥫",n:"Heineken Lata",d:"269ml",p:6},
+      {e:"🥫",n:"Brahma Duplo Malte",d:"269ml",p:5}
+    ]},
+    {title:"🥤 Não Alcoólicas",items:[
+      {e:"🥤",n:"Coca-Cola Lata",d:"350ml",p:6},
+      {e:"🥤",n:"Coca-Cola",d:"600ml",p:8},
+      {e:"💧",n:"Água Mineral",d:"sem gás",p:4},
+      {e:"💧",n:"Água com Gás",d:"",p:4.5},
+      {e:"🍹",n:"Suco Natural",d:"500ml",p:12}
+    ]}
+  ]}
+];
+
+/* ── ESTADO ── */
+var mesaAtualTab = null;
+var carrinho = []; // [{emoji, nome, preco, qty}]
+var catFiltro = 'all';
+var mesasStatusTab = {};
+
+/* ── INIT ── */
+window.addEventListener('load', async function() {
+  await carregarMesasStatus();
+  renderMesaGrid();
+});
+
+async function carregarMesasStatus() {
+  try {
+    var { data } = await SUPA.from('mesas_skali').select('numero,status').order('numero');
+    if (data) data.forEach(function(m){ mesasStatusTab[m.numero] = m.status || 'livre'; });
+  } catch(e) { console.warn('Mesas status:', e); }
+}
+
+function renderMesaGrid() {
+  var grid = document.getElementById('mesa-sel-grid');
+  grid.innerHTML = '';
+  for (var i = 1; i <= 15; i++) {
+    (function(num){
+      var status = mesasStatusTab[num] || 'livre';
+      var card = document.createElement('div');
+      card.className = 'mesa-sel-card ' + status;
+      card.onclick = function(){ selecionarMesa(num); };
+      var icon = status === 'livre' ? '🟢' : '🟡';
+      var label = status === 'livre' ? 'Livre' : 'Ocupada';
+      card.innerHTML = '<div class="msn">'+String(num).padStart(2,'0')+'</div><div class="msl">'+icon+' '+label+'</div>';
+      grid.appendChild(card);
+    })(i);
+  }
+}
+
+function selecionarMesa(num) {
+  mesaAtualTab = num;
+  carrinho = [];
+  catFiltro = 'all';
+  document.getElementById('ped-title').textContent = '🪑 MESA ' + String(num).padStart(2,'0');
+  document.getElementById('mesa-lbl-cart').textContent = 'Mesa ' + String(num).padStart(2,'0');
+  renderCats();
+  renderItems();
+  renderCartDesk();
+  irParaScreen('sc-pedido');
+}
+
+function irParaMesas() {
+  mesaAtualTab = null;
+  carrinho = [];
+  carregarMesasStatus().then(renderMesaGrid);
+  irParaScreen('sc-mesa');
+}
+
+function irParaMenu()     { irParaScreen('sc-pedido'); }
+function irParaCarrinho() { renderCartMob(); irParaScreen('sc-cart'); }
+
+function irParaScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+}
+
+/* ── MENU ── */
+function renderCats() {
+  var el = document.getElementById('ped-cats');
+  el.innerHTML = '';
+  var allBtn = document.createElement('button');
+  allBtn.className = 'ped-cat-btn active';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = function(){ filterCat('all',allBtn); };
+  el.appendChild(allBtn);
+  MENU.forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.className = 'ped-cat-btn';
+    btn.textContent = cat.icon + ' ' + cat.title;
+    btn.onclick = (function(id,b){ return function(){ filterCat(id,b); }; })(cat.id,btn);
+    el.appendChild(btn);
+  });
+}
+
+function filterCat(id, btn) {
+  catFiltro = id;
+  document.querySelectorAll('.ped-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderItems();
+}
+
+function escS(s){ return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function renderItems() {
+  var panel = document.getElementById('ped-items');
+  panel.innerHTML = '';
+  var lista = catFiltro === 'all' ? MENU : MENU.filter(function(c){ return c.id === catFiltro; });
+  lista.forEach(function(cat){
+    var st = document.createElement('div'); st.className='ped-sec'; st.textContent=cat.icon+' '+cat.title; panel.appendChild(st);
+    cat.subs.forEach(function(sub){
+      if (sub.title) {
+        var sd = document.createElement('div');
+        sd.style.cssText='font-size:.62rem;font-weight:900;color:var(--txt2);margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;';
+        sd.textContent=sub.title; panel.appendChild(sd);
+      }
+      sub.items.forEach(function(item){
+        var row = document.createElement('div'); row.className='ped-item';
+        var em = item.e||'🍽️';
+        row.innerHTML='<div class="pi-em">'+em+'</div>'
+          +'<div class="pi-info"><div class="pi-name">'+item.n+'</div>'+(item.d?'<div class="pi-desc">'+item.d+'</div>':'')+'</div>'
+          +'<div class="pi-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
+          +'<button class="pi-add" onclick="addItem(\''+escS(em)+'\',\''+escS(item.n)+'\','+item.p+')">+</button>';
+        panel.appendChild(row);
+      });
+    });
+  });
+}
+
+function addItem(emoji, nome, preco) {
+  var idx = carrinho.findIndex(function(i){ return i.nome===nome; });
+  if (idx !== -1) {
+    carrinho[idx].qty++;
+  } else {
+    carrinho.push({ emoji:emoji, nome:nome, preco:parseFloat(preco), qty:1 });
+  }
+  updateCartBubble();
+  renderCartDesk();
+  tbToast('➕ ' + nome);
+}
+
+function removeItem(idx) {
+  if (carrinho[idx].qty > 1) {
+    carrinho[idx].qty--;
+  } else {
+    carrinho.splice(idx,1);
+  }
+  updateCartBubble();
+  renderCartDesk();
+  renderCartMob();
+}
+
+function updateCartBubble() {
+  var total = carrinho.reduce(function(s,i){ return s+i.qty; }, 0);
+  var val   = carrinho.reduce(function(s,i){ return s+i.preco*i.qty; }, 0);
+  document.getElementById('cart-bubble').textContent = '🛒 '+total+' item'+(total!==1?'s':'')+' · R$ '+val.toFixed(2).replace('.',',');
+}
+
+function renderCartDesk() {
+  var list  = document.getElementById('cart-list-desk');
+  var total = document.getElementById('cart-total-desk');
+  var btn   = document.getElementById('cart-send-desk');
+  list.innerHTML = '';
+  var tot = 0;
+  carrinho.forEach(function(item,idx){
+    tot += item.preco * item.qty;
+    var row = document.createElement('div'); row.className='cart-row';
+    row.innerHTML='<span class="cr-em">'+item.emoji+'</span>'
+      +'<span class="cr-name">'+(item.qty>1?item.qty+'x ':'')+item.nome+'</span>'
+      +'<span class="cr-price">R$ '+(item.preco*item.qty).toFixed(2).replace('.',',')+'</span>'
+      +'<button class="cr-del" onclick="removeItem('+idx+')">✕</button>';
+    list.appendChild(row);
+  });
+  total.textContent = 'R$ ' + tot.toFixed(2).replace('.',',');
+  btn.disabled = carrinho.length === 0;
+}
+
+function renderCartMob() {
+  var el  = document.getElementById('cart-mob-items');
+  var tot = document.getElementById('cart-total-mob');
+  var btn = document.getElementById('cart-send-mob');
+  el.innerHTML = '';
+  var total = 0;
+  carrinho.forEach(function(item,idx){
+    total += item.preco * item.qty;
+    var row = document.createElement('div'); row.className='cart-mob-row';
+    row.innerHTML='<span class="cmr-em">'+item.emoji+'</span>'
+      +'<span class="cmr-name">'+item.nome+'</span>'
+      +'<div class="cmr-qty">'
+      +'<button class="cmr-qbtn" onclick="removeItem('+idx+')">−</button>'
+      +'<span class="cmr-qn">'+item.qty+'</span>'
+      +'<button class="cmr-qbtn" onclick="addItem(\''+escS(item.emoji)+'\',\''+escS(item.nome)+'\','+item.preco+')">+</button>'
+      +'</div>'
+      +'<span class="cmr-price">R$ '+(item.preco*item.qty).toFixed(2).replace('.',',')+'</span>';
+    el.appendChild(row);
+  });
+  if (carrinho.length === 0) el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--txt2);">Carrinho vazio</div>';
+  tot.textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+  btn.disabled = carrinho.length === 0;
+}
+
+async function enviarPedido() {
+  if (carrinho.length === 0 || !mesaAtualTab) return;
+  var num  = mesaAtualTab;
+  var sendBtnDesk = document.getElementById('cart-send-desk');
+  var sendBtnMob  = document.getElementById('cart-send-mob');
+  sendBtnDesk.disabled = sendBtnMob.disabled = true;
+  sendBtnDesk.textContent = sendBtnMob.textContent = '⏳ Enviando...';
+
+  try {
+    var now  = new Date();
+    var hora = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+    var itensArr = [];
+    var total = 0;
+    carrinho.forEach(function(i){
+      for (var q=0; q<i.qty; q++) {
+        itensArr.push({ emoji:i.emoji, name:i.nome, price:i.preco, qty:1, category:'mesa' });
+        total += i.preco;
+      }
+    });
+
+    // Cria pedido para a cozinha
+    var { data: pedRow, error: pedErr } = await SUPA.from('pedidos_skali').insert([{
+      cliente: 'Mesa '+String(num).padStart(2,'0'),
+      telefone: '',
+      endereco: 'Atendimento presencial',
+      entrega:  'Mesa '+String(num).padStart(2,'0'),
+      pagamento:'mesa', troco:'', itens:itensArr,
+      total:total, taxa:0, status:'recebido', hora:hora, nota:'Tablet — Mesa '+num
+    }]).select().single();
+    if (pedErr) throw pedErr;
+
+    var pedidoId = pedRow ? String(pedRow.id) : '';
+
+    // Registra itens na comanda da mesa
+    var insItens = itensArr.map(function(i){
+      return { mesa_numero:num, item_nome:i.name, item_preco:i.price, emoji:i.emoji, status_pagamento:'pendente', pedido_id:pedidoId };
+    });
+    var { error: itErr } = await SUPA.from('itens_comanda_skali').insert(insItens);
+    if (itErr) throw itErr;
+
+    // Marca mesa como ocupada
+    var statusAtual = mesasStatusTab[num] || 'livre';
+    if (statusAtual === 'livre') {
+      await SUPA.from('mesas_skali').update({ status:'ocupada', aberta_em:now.toISOString() }).eq('numero', num);
+      mesasStatusTab[num] = 'ocupada';
+    }
+
+    // Tela de confirmação
+    var qtdTotal = carrinho.reduce(function(s,i){ return s+i.qty; }, 0);
+    document.getElementById('confirm-sub').textContent = 'Mesa '+String(num).padStart(2,'0')+' · '+qtdTotal+' item(s) · R$ '+total.toFixed(2).replace('.',',');
+    irParaScreen('sc-confirm');
+    carrinho = [];
+    updateCartBubble();
+
+  } catch(e) {
+    console.error(e);
+    tbToast('❌ Erro: ' + (e && e.message ? e.message : 'Tente novamente'));
+    sendBtnDesk.disabled = sendBtnMob.disabled = false;
+    sendBtnDesk.textContent = '✅ Enviar para Cozinha';
+    sendBtnMob.textContent  = '✅ Enviar para Cozinha';
+  }
+}
+
+function tbToast(msg) {
+  var el = document.getElementById('tb-toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  setTimeout(function(){ el.classList.remove('show'); }, 2500);
+}
+</script>
+</body>
+</html>
