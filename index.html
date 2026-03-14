@@ -2306,6 +2306,96 @@ async function enviarPedidoMesa() {
   }
 }
 
+// ── TABS DA COMANDA ─────────────────────────────────────────
+var cmdCatFilter = 'all';
+
+function switchCmdTab(tab) {
+  ['catalogo','pedidos'].forEach(function(t){
+    var panel = document.getElementById('cmd-panel-' + t);
+    var btn   = document.getElementById('cmd-tab-btn-' + t);
+    if (panel) panel.classList.toggle('hidden', t !== tab);
+    if (btn)   btn.classList.toggle('active', t === tab);
+  });
+  if (tab === 'catalogo') renderCatalog();
+}
+
+function renderCatalog() {
+  var pils = document.getElementById('cmd-cat-pills');
+  var grid = document.getElementById('cmd-catalog-grid');
+  if (!pils || !grid) return;
+  // Pills de categoria
+  pils.innerHTML = '';
+  var allPill = document.createElement('button');
+  allPill.className = 'cmd-cat-pill' + (cmdCatFilter === 'all' ? ' active' : '');
+  allPill.textContent = '🍽️ Todos';
+  allPill.onclick = function(){ cmdCatFilter = 'all'; renderCatalog(); };
+  pils.appendChild(allPill);
+  MENU.forEach(function(cat){
+    var pill = document.createElement('button');
+    pill.className = 'cmd-cat-pill' + (cmdCatFilter === cat.id ? ' active' : '');
+    pill.textContent = cat.icon + ' ' + cat.title;
+    pill.onclick = (function(id){ return function(){ cmdCatFilter = id; renderCatalog(); }; })(cat.id);
+    pils.appendChild(pill);
+  });
+  // Cards de produto
+  grid.innerHTML = '';
+  MENU.forEach(function(cat){
+    if (cmdCatFilter !== 'all' && cmdCatFilter !== cat.id) return;
+    cat.subs.forEach(function(sub){
+      sub.items.forEach(function(item){
+        var card = document.createElement('div');
+        card.className = 'catalog-card';
+        card.innerHTML = '<div class="catalog-card-emoji">' + (item.e||'🍽️') + '</div>'
+          + '<div class="catalog-card-name">' + item.n + '</div>'
+          + '<div class="catalog-card-price">R$ ' + Number(item.p).toFixed(2).replace('.',',') + '</div>';
+        card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e||'🍽️', item.n, item.p, card);
+        grid.appendChild(card);
+      });
+    });
+  });
+}
+
+async function adicionarItemCatalogo(emoji, nome, preco, cardEl) {
+  // feedback visual imediato
+  if (cardEl) {
+    if (cardEl.querySelector('.catalog-adding')) return;
+    var fb = document.createElement('div');
+    fb.className = 'catalog-adding';
+    fb.textContent = '✅';
+    cardEl.appendChild(fb);
+    setTimeout(function(){ if (fb.parentNode) fb.parentNode.removeChild(fb); }, 380);
+  }
+  var num = mesaAtual;
+  try {
+    var ins = [{ mesa_numero: num, item_nome: nome, item_preco: preco, emoji: emoji, status_pagamento: 'pendente', pedido_id: 'painel-' + Date.now() }];
+    var resp = await SUPA.from('itens_comanda_skali').insert(ins).select();
+    if (resp.error) throw resp.error;
+    var novos = resp.data || [];
+    if ((mesaStatusGlobais[num] || 'livre') === 'livre') {
+      await SUPA.from('mesas_skali').update({ status:'ocupada', aberta_em: new Date().toISOString() }).eq('numero', num);
+      mesaStatusGlobais[num] = 'ocupada';
+      var chipEl = document.getElementById('cmd-schip');
+      if (chipEl) { chipEl.textContent = '🟡 Ocupada'; chipEl.className = 'cmd-schip ocupada'; }
+    }
+    if (!mesaItensGlobais[num]) mesaItensGlobais[num] = [];
+    novos.forEach(function(it){ mesaItensGlobais[num].push(it); });
+    renderMesas();
+    atualizarBadgePedidos(num);
+    renderComandaBill(num);
+    showToast('✅ ' + emoji + ' ' + nome + ' adicionado');
+  } catch(e) {
+    console.error(e);
+    showToast('❌ Erro: ' + (e && e.message ? e.message : 'Falha ao adicionar'));
+  }
+}
+
+function atualizarBadgePedidos(num) {
+  var badge = document.getElementById('cmd-pedidos-badge');
+  if (!badge) return;
+  var total = (mesaItensGlobais[num] || []).filter(function(it){ return it.status_pagamento !== 'pago'; }).length;
+  badge.textContent = total;
+}
+
 // ── ADICIONAR ITEM MANUAL (balconista) ──────────────────────
 async function adicionarItemManual() {
   var emoji = (document.getElementById('cmd-add-emoji').value || '🍽️').trim();
@@ -2345,6 +2435,7 @@ async function adicionarItemManual() {
 // ── COMANDA FULL-SCREEN ────────────────────────────────────
 function abrirComandaModal(num) {
   mesaAtual = num;
+  cmdCatFilter = 'all';
   var status = mesaStatusGlobais[num] || 'livre';
   var chipEl = document.getElementById('cmd-schip');
   document.getElementById('cmd-mesa-lbl').textContent = '🪑 MESA ' + String(num).padStart(2,'0');
@@ -2352,9 +2443,11 @@ function abrirComandaModal(num) {
     chipEl.textContent = status === 'conta' ? '🔴 Conta Pedida' : '🟡 Ocupada';
     chipEl.className   = 'cmd-schip ' + (status === 'conta' ? 'conta' : 'ocupada');
   }
+  document.getElementById('comanda-overlay').classList.add('open');
+  switchCmdTab('catalogo');
   renderComandaCards(num);
   renderComandaBill(num);
-  document.getElementById('comanda-overlay').classList.add('open');
+  atualizarBadgePedidos(num);
 }
 
 function closeComandaModal() {
