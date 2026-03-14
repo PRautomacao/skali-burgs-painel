@@ -440,6 +440,31 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-cust-cancel:hover{background:rgba(255,255,255,.1);}
 .cmd-cust-confirm{flex:2;padding:11px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:10px;color:var(--az);font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;transition:all .15s;}
 .cmd-cust-confirm:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,196,0,.3);}
+/* ── calculadora de pagamento por valor ── */
+.calc-panel{background:rgba(245,196,0,.04);border:1.5px solid rgba(245,196,0,.18);border-radius:12px;padding:12px 14px;margin-bottom:10px;display:none;}
+.calc-panel.open{display:block;}
+.calc-title{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--am);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+.calc-input-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
+.calc-prefix{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);}
+.calc-input{flex:1;padding:9px 12px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--txt);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;text-align:right;outline:none;transition:border-color .2s;}
+.calc-input:focus{border-color:var(--am);}
+.calc-auto-btn{padding:9px 12px;background:rgba(245,196,0,.12);border:1.5px solid rgba(245,196,0,.3);border-radius:10px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.72rem;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.calc-auto-btn:hover{background:rgba(245,196,0,.22);}
+.calc-preview{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:none;}
+.calc-preview.show{display:block;}
+.calc-prev-row{display:flex;justify-content:space-between;align-items:center;font-size:.72rem;font-weight:700;padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.calc-prev-row:last-child{border:none;}
+.calc-prev-row.troco{color:var(--green);font-family:'Bebas Neue',sans-serif;font-size:.85rem;}
+.calc-prev-row.falta{color:var(--orange);font-family:'Bebas Neue',sans-serif;font-size:.85rem;}
+.calc-prev-row.total-sel{color:var(--am);}
+.calc-item-list{margin:6px 0;padding:0 4px;}
+.calc-item-chip{display:flex;align-items:center;gap:5px;font-size:.68rem;color:var(--txt2);padding:2px 0;}
+.calc-item-chip span.em{font-size:.85rem;}
+.calc-confirm-btn{width:100%;padding:11px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:10px;color:#fff;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;transition:all .2s;display:none;}
+.calc-confirm-btn.show{display:block;}
+.calc-confirm-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(34,197,94,.3);}
+.calc-toggle-btn{width:100%;padding:9px;background:rgba(245,196,0,.07);border:1.5px solid rgba(245,196,0,.2);border-radius:10px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.75rem;cursor:pointer;transition:all .15s;margin-bottom:6px;}
+.calc-toggle-btn:hover{background:rgba(245,196,0,.14);}
 /* sucos pills no catálogo */
 .catalog-suco-pill{padding:7px 14px;background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.2);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--txt2);user-select:none;text-align:center;}
 .catalog-suco-pill:hover{background:rgba(34,197,94,.18);border-color:var(--green);color:var(--green);transform:translateY(-2px);}
@@ -796,6 +821,23 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       <div class="cmd-bill-rows" id="cmd-bill-rows"></div>
       <div class="cmd-totals-box" id="cmd-totals-box"></div>
       <div class="cmd-actions">
+        <button class="calc-toggle-btn" onclick="toggleCalcPagamento()">💰 Pagamento por Valor</button>
+        <div class="calc-panel" id="calc-panel">
+          <div class="calc-title">💰 QUANTO O CLIENTE VAI PAGAR?</div>
+          <div class="calc-input-row">
+            <span class="calc-prefix">R$</span>
+            <input type="number" id="calc-valor-input" class="calc-input" placeholder="0,00" step="0.50" min="0" oninput="calcPreview()">
+            <button class="calc-auto-btn" onclick="calcAutoSelect()">Auto-selecionar</button>
+          </div>
+          <div class="calc-preview" id="calc-preview">
+            <div class="calc-item-list" id="calc-item-list"></div>
+            <div class="calc-prev-row total-sel"><span>Itens selecionados</span><span id="calc-total-sel">R$ 0,00</span></div>
+            <div class="calc-prev-row"><span>Cliente paga</span><span id="calc-paga-lbl">R$ 0,00</span></div>
+            <div class="calc-prev-row troco" id="calc-troco-row"><span>Troco</span><span id="calc-troco-lbl">R$ 0,00</span></div>
+            <div class="calc-prev-row falta" id="calc-falta-row" style="display:none;"><span>⚠️ Falta cobrir</span><span id="calc-falta-lbl">R$ 0,00</span></div>
+          </div>
+          <button class="calc-confirm-btn" id="calc-confirm-btn" onclick="calcConfirmar()">✅ Confirmar Pagamento</button>
+        </div>
         <div class="cmd-hint-box" id="cmd-hint-box">☑️ Marque os itens pagos na grade ao lado</div>
         <button class="cmd-act partial" id="cmd-btn-partial" onclick="fecharParcial()">💳 Fechar Itens Selecionados</button>
         <button class="cmd-act conta" onclick="pedirContaMesa()">📋 Pedir Conta</button>
@@ -2586,6 +2628,153 @@ async function custConfirmar() {
   var displayName = notes.length ? custSandState.nome + ' (' + notes.join(' | ') + ')' : custSandState.nome;
   closeCustSand();
   await adicionarItemCatalogo(custSandState.emoji, displayName, finalPrice, null);
+}
+
+// ── CALCULADORA DE PAGAMENTO POR VALOR ─────────────────────
+var calcItensSelected = []; // IDs dos itens auto-selecionados
+
+function toggleCalcPagamento() {
+  var panel = document.getElementById('calc-panel');
+  if (!panel) return;
+  var isOpen = panel.classList.contains('open');
+  panel.classList.toggle('open', !isOpen);
+  if (!isOpen) {
+    // Limpar ao abrir
+    document.getElementById('calc-valor-input').value = '';
+    document.getElementById('calc-preview').classList.remove('show');
+    document.getElementById('calc-confirm-btn').classList.remove('show');
+    calcItensSelected = [];
+  }
+}
+
+function calcFmt(v) {
+  return 'R$ ' + v.toFixed(2).replace('.', ',');
+}
+
+function calcAutoSelect() {
+  var input = document.getElementById('calc-valor-input');
+  var pagamento = parseFloat(input.value);
+  if (!pagamento || pagamento <= 0) {
+    showToast('⚠️ Digite o valor que o cliente vai pagar');
+    return;
+  }
+  var pendentes = (mesaItensGlobais[mesaAtual] || []).filter(function(it){
+    return it.status_pagamento !== 'pago';
+  });
+  if (!pendentes.length) {
+    showToast('Não há itens em aberto nesta mesa');
+    return;
+  }
+  // Algoritmo: selecionar itens em ordem até cobrir o pagamento
+  // Preferência: itens do menor para o maior (melhor encaixe)
+  var ordenados = pendentes.slice().sort(function(a,b){ return a.item_preco - b.item_preco; });
+  var selecionados = [];
+  var acumulado = 0;
+  // Tenta encaixar sem estourar
+  for (var i = 0; i < ordenados.length; i++) {
+    if (acumulado + ordenados[i].item_preco <= pagamento) {
+      selecionados.push(ordenados[i]);
+      acumulado += ordenados[i].item_preco;
+    }
+  }
+  // Se não selecionou nada (todos os itens > pagamento), pega o mais barato
+  if (!selecionados.length && ordenados.length) {
+    selecionados.push(ordenados[0]);
+    acumulado = ordenados[0].item_preco;
+  }
+  calcItensSelected = selecionados.map(function(it){ return it.id; });
+  calcMostrarPreview(pagamento, selecionados, acumulado);
+}
+
+function calcPreview() {
+  // Chamado ao digitar — só mostra preview se já há seleção
+  if (calcItensSelected.length) calcAutoSelect();
+}
+
+function calcMostrarPreview(pagamento, selecionados, totalSel) {
+  var preview  = document.getElementById('calc-preview');
+  var itemList = document.getElementById('calc-item-list');
+  var confirmBtn = document.getElementById('calc-confirm-btn');
+  if (!preview) return;
+  preview.classList.add('show');
+
+  // Lista de itens selecionados
+  itemList.innerHTML = selecionados.map(function(it){
+    return '<div class="calc-item-chip"><span class="em">'+(it.emoji||'🍽️')+'</span>'
+      + '<span style="flex:1;">'+it.item_nome+'</span>'
+      + '<span style="color:var(--am);font-family:Bebas Neue,sans-serif;">'+calcFmt(it.item_preco)+'</span></div>';
+  }).join('');
+
+  document.getElementById('calc-total-sel').textContent = calcFmt(totalSel);
+  document.getElementById('calc-paga-lbl').textContent   = calcFmt(pagamento);
+
+  var diff = pagamento - totalSel;
+  var trocoRow = document.getElementById('calc-troco-row');
+  var faltaRow = document.getElementById('calc-falta-row');
+
+  if (diff >= 0) {
+    // Tem troco ou exato
+    trocoRow.style.display = 'flex';
+    faltaRow.style.display = 'none';
+    document.getElementById('calc-troco-lbl').textContent = calcFmt(diff);
+  } else {
+    // Itens selecionados ultrapassam o pagamento
+    trocoRow.style.display = 'none';
+    faltaRow.style.display = 'flex';
+    document.getElementById('calc-falta-lbl').textContent = calcFmt(Math.abs(diff));
+  }
+
+  if (selecionados.length > 0) {
+    confirmBtn.classList.add('show');
+    confirmBtn.textContent = '✅ Confirmar — ' + selecionados.length + ' item(ns) = ' + calcFmt(totalSel) + ' | Troco: ' + calcFmt(Math.max(0, diff));
+  }
+}
+
+async function calcConfirmar() {
+  if (!calcItensSelected.length) { showToast('⚠️ Nenhum item selecionado'); return; }
+  var btn = document.getElementById('calc-confirm-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Processando...';
+  try {
+    var resp = await SUPA.from('itens_comanda_skali')
+      .update({ status_pagamento: 'pago' })
+      .in('id', calcItensSelected);
+    if (resp.error) throw resp.error;
+
+    // Atualizar estado local
+    var num = mesaAtual;
+    (mesaItensGlobais[num] || []).forEach(function(it){
+      if (calcItensSelected.indexOf(it.id) !== -1) it.status_pagamento = 'pago';
+    });
+
+    // Verificar se ainda há itens pendentes
+    var pendentes = (mesaItensGlobais[num] || []).filter(function(it){
+      return it.status_pagamento !== 'pago';
+    });
+    if (!pendentes.length) {
+      // Fechar mesa automaticamente
+      await SUPA.from('mesas_skali').update({ status:'livre', fechada_em: new Date().toISOString() }).eq('numero', num);
+      mesaStatusGlobais[num] = 'livre';
+      showToast('✅ Mesa quitada! Mesa ' + String(num).padStart(2,'0') + ' liberada.');
+      toggleCalcPagamento();
+      renderMesas();
+      closeComandaModal();
+    } else {
+      showToast('✅ Pagamento confirmado! ' + calcItensSelected.length + ' item(ns) quitado(s).');
+      // Fechar calculadora
+      document.getElementById('calc-panel').classList.remove('open');
+      calcItensSelected = [];
+      renderComandaCards(num);
+      renderComandaBill(num);
+      atualizarBadgePedidos(num);
+      renderMesas();
+    }
+  } catch(e) {
+    console.error(e);
+    showToast('❌ Erro: ' + (e && e.message ? e.message : 'Falha'));
+    btn.disabled = false;
+    btn.textContent = '✅ Confirmar Pagamento';
+  }
 }
 
 // ── ADICIONAR ITEM MANUAL (balconista) ──────────────────────
