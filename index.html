@@ -421,6 +421,28 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-add-input::placeholder{color:var(--txt2);opacity:.6;}
 .cmd-add-btn{padding:8px 16px;background:var(--am);border:none;border-radius:8px;color:var(--az);font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:all .15s;}
 .cmd-add-btn:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(245,196,0,.3);}
+/* ── customização sanduíche na comanda ── */
+.cmd-cust-overlay{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:center;justify-content:center;backdrop-filter:blur(5px);}
+.cmd-cust-overlay.open{display:flex;}
+.cmd-cust-box{background:var(--bg2);border:2px solid var(--border);border-radius:16px;width:95%;max-width:660px;max-height:88vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.cmd-cust-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg2);flex-shrink:0;}
+.cmd-cust-name{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);letter-spacing:2px;flex:1;}
+.cmd-cust-body{overflow-y:auto;padding:16px;flex:1;}
+.cmd-cust-sec{font-family:'Nunito',sans-serif;font-weight:900;font-size:.67rem;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin:12px 0 8px;}
+.cust-ing-grid,.cust-ad-grid{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:6px;}
+.cust-ing-tag{padding:6px 12px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;user-select:none;}
+.cust-ing-tag.removed{background:rgba(239,68,68,.12);border-color:rgba(239,68,68,.4);color:var(--red);text-decoration:line-through;}
+.cust-ad-tag{padding:6px 12px;background:rgba(245,196,0,.05);border:1.5px solid rgba(245,196,0,.18);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--txt2);user-select:none;}
+.cust-ad-tag.selected{background:rgba(245,196,0,.16);border-color:var(--am);color:var(--am);}
+.cust-ad-price{font-size:.6rem;color:var(--am);margin-left:2px;}
+.cmd-cust-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
+.cmd-cust-cancel{flex:1;padding:11px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;transition:background .15s;}
+.cmd-cust-cancel:hover{background:rgba(255,255,255,.1);}
+.cmd-cust-confirm{flex:2;padding:11px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:10px;color:var(--az);font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;transition:all .15s;}
+.cmd-cust-confirm:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,196,0,.3);}
+/* sucos pills no catálogo */
+.catalog-suco-pill{padding:7px 14px;background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.2);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--txt2);user-select:none;text-align:center;}
+.catalog-suco-pill:hover{background:rgba(34,197,94,.18);border-color:var(--green);color:var(--green);transform:translateY(-2px);}
 .cmd-bill{width:290px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
 .cmd-bill-hdr{padding:14px 16px;border-bottom:1px solid var(--border);}
 .cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
@@ -780,6 +802,30 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <button class="cmd-act print" onclick="printCupomMesa()">🖨️ Imprimir Cupom</button>
         <button class="cmd-act close" onclick="fecharMesaTotal()">✅ Fechar Mesa</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- CUSTOMIZAÇÃO SANDUÍCHE NA COMANDA -->
+<div class="cmd-cust-overlay" id="cmd-cust-overlay" onclick="if(event.target===this)closeCustSand()">
+  <div class="cmd-cust-box">
+    <div class="cmd-cust-head">
+      <span id="cmd-cust-emoji" style="font-size:1.8rem;line-height:1;"></span>
+      <div class="cmd-cust-name" id="cmd-cust-name">SANDUÍCHE</div>
+      <span id="cmd-cust-base-price" style="font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);"></span>
+      <button class="modal-close" onclick="closeCustSand()">✕</button>
+    </div>
+    <div class="cmd-cust-body">
+      <div class="cmd-cust-sec">🥗 Ingredientes — toque para retirar</div>
+      <div class="cust-ing-grid" id="cust-ing-grid"></div>
+      <div class="cmd-cust-sec" style="margin-top:16px;">➕ Adicionais pagos</div>
+      <div class="cust-ad-grid" id="cust-ad-grid"></div>
+    </div>
+    <div class="cmd-cust-footer">
+      <button class="cmd-cust-cancel" onclick="closeCustSand()">Cancelar</button>
+      <button class="cmd-cust-confirm" id="cmd-cust-confirm-btn" onclick="custConfirmar()">
+        ➕ Adicionar — <span id="cust-total-lbl">R$ 0,00</span>
+      </button>
     </div>
   </div>
 </div>
@@ -2317,19 +2363,29 @@ function switchCmdTab(tab) {
     if (btn)   btn.classList.toggle('active', t === tab);
   });
   if (tab === 'catalogo') renderCatalog();
+  if (tab === 'pedidos')  { renderComandaCards(mesaAtual); renderComandaBill(mesaAtual); }
 }
 
 function renderCatalog() {
   var pils = document.getElementById('cmd-cat-pills');
   var grid = document.getElementById('cmd-catalog-grid');
   if (!pils || !grid) return;
-  // Pills de categoria
+
+  // Pills de categoria — MENU + Sucos + Cremes
   pils.innerHTML = '';
-  var allPill = document.createElement('button');
-  allPill.className = 'cmd-cat-pill' + (cmdCatFilter === 'all' ? ' active' : '');
-  allPill.textContent = '🍽️ Todos';
-  allPill.onclick = function(){ cmdCatFilter = 'all'; renderCatalog(); };
-  pils.appendChild(allPill);
+  var extraCats = [
+    {id:'all',   icon:'🍽️', title:'Todos'},
+    {id:'sucos', icon:'🍹', title:'Sucos'},
+    {id:'cremes',icon:'🍨', title:'Cremes'}
+  ];
+  extraCats.forEach(function(ec){
+    if (ec.id !== 'all') return; // "Todos" primeiro
+    var pill = document.createElement('button');
+    pill.className = 'cmd-cat-pill' + (cmdCatFilter === ec.id ? ' active' : '');
+    pill.textContent = ec.icon + ' ' + ec.title;
+    pill.onclick = (function(id){ return function(){ cmdCatFilter = id; renderCatalog(); }; })(ec.id);
+    pils.appendChild(pill);
+  });
   MENU.forEach(function(cat){
     var pill = document.createElement('button');
     pill.className = 'cmd-cat-pill' + (cmdCatFilter === cat.id ? ' active' : '');
@@ -2337,18 +2393,80 @@ function renderCatalog() {
     pill.onclick = (function(id){ return function(){ cmdCatFilter = id; renderCatalog(); }; })(cat.id);
     pils.appendChild(pill);
   });
-  // Cards de produto
+  [{id:'sucos',icon:'🍹',title:'Sucos'},{id:'cremes',icon:'🍨',title:'Cremes'}].forEach(function(ec){
+    var pill = document.createElement('button');
+    pill.className = 'cmd-cat-pill' + (cmdCatFilter === ec.id ? ' active' : '');
+    pill.textContent = ec.icon + ' ' + ec.title;
+    pill.onclick = (function(id){ return function(){ cmdCatFilter = id; renderCatalog(); }; })(ec.id);
+    pils.appendChild(pill);
+  });
+
   grid.innerHTML = '';
+
+  // ── SUCOS ──
+  if (cmdCatFilter === 'all' || cmdCatFilter === 'sucos') {
+    if (cmdCatFilter === 'sucos') {
+      var title = document.createElement('div');
+      title.style.cssText = 'grid-column:1/-1;font-family:Bebas Neue,sans-serif;font-size:.85rem;color:var(--am);letter-spacing:2px;margin-bottom:4px;';
+      title.textContent = '🍹 SUCOS NATURAIS';
+      grid.appendChild(title);
+    }
+    var sucosItems = SUCOS_LIST.map(function(s){ return {e:'🍹',n:'Suco de '+s.replace(/^[^\s]+\s/,''),p:11}; });
+    sucosItems.push({e:'🍊',n:'Suco de Laranja',p:12});
+    sucosItems.push({e:'🍊',n:'Suco de Laranja s/Gelo',p:13});
+    sucosItems.forEach(function(item){
+      var card = document.createElement('div');
+      card.className = 'catalog-card';
+      card.innerHTML = '<div class="catalog-card-emoji">'+item.e+'</div>'
+        +'<div class="catalog-card-name">'+item.n+'</div>'
+        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>';
+      card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e,item.n,item.p,card);
+      grid.appendChild(card);
+    });
+  }
+
+  // ── CREMES ──
+  if (cmdCatFilter === 'all' || cmdCatFilter === 'cremes') {
+    if (cmdCatFilter === 'cremes') {
+      var titleC = document.createElement('div');
+      titleC.style.cssText = 'grid-column:1/-1;font-family:Bebas Neue,sans-serif;font-size:.85rem;color:var(--am);letter-spacing:2px;margin-bottom:4px;';
+      titleC.textContent = '🍨 CREMES';
+      grid.appendChild(titleC);
+    }
+    var cremesItems = CREMES_LIST.map(function(s){ return {e:'🍨',n:'Creme de '+s.replace(/^[^\s]+\s/,''),p:15}; });
+    cremesItems.forEach(function(item){
+      var card = document.createElement('div');
+      card.className = 'catalog-card';
+      card.innerHTML = '<div class="catalog-card-emoji">'+item.e+'</div>'
+        +'<div class="catalog-card-name">'+item.n+'</div>'
+        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>';
+      card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e,item.n,item.p,card);
+      grid.appendChild(card);
+    });
+  }
+
+  // ── MENU PADRÃO (sanduíches, porções, grelhados, bebidas) ──
   MENU.forEach(function(cat){
     if (cmdCatFilter !== 'all' && cmdCatFilter !== cat.id) return;
     cat.subs.forEach(function(sub){
       sub.items.forEach(function(item){
         var card = document.createElement('div');
         card.className = 'catalog-card';
-        card.innerHTML = '<div class="catalog-card-emoji">' + (item.e||'🍽️') + '</div>'
-          + '<div class="catalog-card-name">' + item.n + '</div>'
-          + '<div class="catalog-card-price">R$ ' + Number(item.p).toFixed(2).replace('.',',') + '</div>';
-        card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e||'🍽️', item.n, item.p, card);
+        card.innerHTML = '<div class="catalog-card-emoji">'+(item.e||'🍽️')+'</div>'
+          +'<div class="catalog-card-name">'+item.n+'</div>'
+          +'<div class="catalog-card-price">R$ '+Number(item.p).toFixed(2).replace('.',',')+'</div>';
+        // Sanduíches com customização; demais direto
+        if (item.ads) {
+          card.onclick = (function(e,n,p,d,c){ return function(){ abrirCustSanduiche(e,n,p,d,c); }; })(item.e||'🍔',item.n,item.p,item.d||'',card);
+          // Indicador visual que tem personalização
+          var badge = document.createElement('div');
+          badge.style.cssText = 'position:absolute;top:4px;right:4px;font-size:.5rem;background:rgba(245,196,0,.15);border:1px solid rgba(245,196,0,.3);border-radius:6px;padding:1px 4px;color:var(--am);font-weight:900;';
+          badge.textContent = '✏️';
+          card.style.position = 'relative';
+          card.appendChild(badge);
+        } else {
+          card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e||'🍽️',item.n,item.p,card);
+        }
         grid.appendChild(card);
       });
     });
@@ -2394,6 +2512,80 @@ function atualizarBadgePedidos(num) {
   if (!badge) return;
   var total = (mesaItensGlobais[num] || []).filter(function(it){ return it.status_pagamento !== 'pago'; }).length;
   badge.textContent = total;
+}
+
+// ── CUSTOMIZAÇÃO SANDUÍCHE NA COMANDA ─────────────────────
+var custSandState = { emoji:'🍔', nome:'', preco:0, desc:'', removals:{}, extras:[] };
+
+function abrirCustSanduiche(emoji, nome, preco, desc, cardEl) {
+  custSandState = { emoji:emoji, nome:nome, preco:preco, desc:desc, removals:{}, extras:[] };
+  document.getElementById('cmd-cust-emoji').textContent = emoji;
+  document.getElementById('cmd-cust-name').textContent  = nome;
+  document.getElementById('cmd-cust-base-price').textContent = 'R$ ' + preco.toFixed(2).replace('.',',');
+
+  // Ingredientes
+  var ingGrid = document.getElementById('cust-ing-grid');
+  var ings = desc ? desc.replace(/ e /g,', ').split(',').map(function(s){ return s.trim(); }).filter(Boolean) : [];
+  if (ings.length) {
+    ingGrid.innerHTML = ings.map(function(ing, i){
+      return '<span class="cust-ing-tag" data-idx="'+i+'" data-nome="'+ing+'" onclick="custToggleIng(this)">'+ing+'</span>';
+    }).join('');
+  } else {
+    ingGrid.innerHTML = '<span style="font-size:.7rem;color:var(--txt2);">Padrão — sem ingredientes customizáveis</span>';
+  }
+
+  // Adicionais
+  var adGrid = document.getElementById('cust-ad-grid');
+  adGrid.innerHTML = ADICIONAIS.map(function(a){
+    return '<span class="cust-ad-tag" data-name="'+a.n+'" data-price="'+a.p+'" onclick="custToggleAd(this)">'
+      + a.n + ' <span class="cust-ad-price">+R$ '+a.p.toFixed(2).replace('.',',')+'</span></span>';
+  }).join('');
+
+  custAtualizarTotal();
+  document.getElementById('cmd-cust-overlay').classList.add('open');
+}
+
+function closeCustSand() {
+  document.getElementById('cmd-cust-overlay').classList.remove('open');
+}
+
+function custToggleIng(el) {
+  el.classList.toggle('removed');
+  var idx = el.dataset.idx;
+  if (el.classList.contains('removed')) custSandState.removals[idx] = el.dataset.nome;
+  else delete custSandState.removals[idx];
+}
+
+function custToggleAd(el) {
+  el.classList.toggle('selected');
+  var name = el.dataset.name;
+  var price = parseFloat(el.dataset.price);
+  var existing = custSandState.extras.findIndex(function(x){ return x.n === name; });
+  if (el.classList.contains('selected')) {
+    if (existing === -1) custSandState.extras.push({n:name, p:price});
+  } else {
+    if (existing !== -1) custSandState.extras.splice(existing, 1);
+  }
+  custAtualizarTotal();
+}
+
+function custAtualizarTotal() {
+  var extra = custSandState.extras.reduce(function(a,x){ return a+x.p; }, 0);
+  var total = custSandState.preco + extra;
+  var lbl = document.getElementById('cust-total-lbl');
+  if (lbl) lbl.textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+}
+
+async function custConfirmar() {
+  var notes = [];
+  var removedNames = Object.values(custSandState.removals);
+  if (removedNames.length) notes.push('Sem: ' + removedNames.join(', '));
+  if (custSandState.extras.length) notes.push('+' + custSandState.extras.map(function(x){ return x.n; }).join(', '));
+  var extraPrice = custSandState.extras.reduce(function(a,x){ return a+x.p; }, 0);
+  var finalPrice = custSandState.preco + extraPrice;
+  var displayName = notes.length ? custSandState.nome + ' (' + notes.join(' | ') + ')' : custSandState.nome;
+  closeCustSand();
+  await adicionarItemCatalogo(custSandState.emoji, displayName, finalPrice, null);
 }
 
 // ── ADICIONAR ITEM MANUAL (balconista) ──────────────────────
