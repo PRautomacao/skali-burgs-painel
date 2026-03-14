@@ -445,10 +445,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .calc-panel.open{display:block;}
 .calc-title{font-family:'Bebas Neue',sans-serif;font-size:.85rem;color:var(--am);letter-spacing:2px;margin-bottom:10px;display:flex;align-items:center;gap:6px;}
 .calc-input-row{display:flex;gap:6px;align-items:center;margin-bottom:10px;}
-.calc-prefix{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);}
-.calc-input{flex:1;padding:9px 12px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--txt);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;text-align:right;outline:none;transition:border-color .2s;}
+.calc-prefix{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);flex-shrink:0;}
+.calc-input{flex:1;min-width:0;padding:9px 12px;background:var(--bg);border:2px solid var(--border);border-radius:10px;color:var(--txt);font-family:'Bebas Neue',sans-serif;font-size:1.2rem;text-align:right;outline:none;transition:border-color .2s;}
 .calc-input:focus{border-color:var(--am);}
-.calc-auto-btn{padding:9px 12px;background:rgba(245,196,0,.12);border:1.5px solid rgba(245,196,0,.3);border-radius:10px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.72rem;cursor:pointer;white-space:nowrap;transition:all .15s;}
+.calc-auto-btn{padding:9px 10px;background:rgba(245,196,0,.12);border:1.5px solid rgba(245,196,0,.3);border-radius:10px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.68rem;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
 .calc-auto-btn:hover{background:rgba(245,196,0,.22);}
 .calc-preview{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:10px;display:none;}
 .calc-preview.show{display:block;}
@@ -468,7 +468,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 /* sucos pills no catálogo */
 .catalog-suco-pill{padding:7px 14px;background:rgba(34,197,94,.07);border:1.5px solid rgba(34,197,94,.2);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--txt2);user-select:none;text-align:center;}
 .catalog-suco-pill:hover{background:rgba(34,197,94,.18);border-color:var(--green);color:var(--green);transform:translateY(-2px);}
-.cmd-bill{width:290px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
+.cmd-bill{width:340px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
 .cmd-bill-hdr{padding:14px 16px;border-bottom:1px solid var(--border);}
 .cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
 .cmd-bill-sub{font-size:.6rem;color:var(--txt2);font-weight:700;margin-top:2px;}
@@ -485,7 +485,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-trow.sel-total{color:var(--am);}
 .cmd-trow.pago-total{color:var(--green);}
 .cmd-trow.grand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
-.cmd-actions{padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.cmd-actions{overflow-y:auto;padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
 .cmd-act{width:100%;padding:10px 14px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .cmd-act.partial{background:rgba(59,130,246,.1);color:#60a5fa;border:1.5px solid rgba(59,130,246,.3);}
 .cmd-act.partial:hover{background:rgba(59,130,246,.2);}
@@ -779,6 +779,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <div class="cmd-mesa-lbl" id="cmd-mesa-lbl">🪑 MESA 01</div>
     <span class="cmd-schip ocupada" id="cmd-schip">🟡 Ocupada</span>
     <div style="flex:1;"></div>
+    <span id="cmd-atendente-lbl" style="font-size:.62rem;color:var(--txt2);font-weight:700;background:rgba(255,255,255,.06);padding:4px 10px;border-radius:10px;border:1px solid rgba(255,255,255,.08);display:none;"></span>
     <span id="cmd-rt-lbl" style="font-size:.62rem;color:var(--txt2);font-weight:700;">● Tempo Real</span>
   </div>
   <div class="cmd-content">
@@ -2823,6 +2824,22 @@ function abrirComandaModal(num) {
   if (chipEl) {
     chipEl.textContent = status === 'conta' ? '🔴 Conta Pedida' : '🟡 Ocupada';
     chipEl.className   = 'cmd-schip ' + (status === 'conta' ? 'conta' : 'ocupada');
+  }
+  // Mostrar atendente(s) que atenderam esta mesa
+  var atLbl = document.getElementById('cmd-atendente-lbl');
+  if (atLbl) {
+    var itens = mesaItensGlobais[num] || [];
+    var nomes = [];
+    itens.forEach(function(it){
+      var n = it.atendente_nome || '';
+      if (n && nomes.indexOf(n) === -1) nomes.push(n);
+    });
+    if (nomes.length) {
+      atLbl.textContent = '👤 ' + nomes.join(' · ');
+      atLbl.style.display = '';
+    } else {
+      atLbl.style.display = 'none';
+    }
   }
   document.getElementById('comanda-overlay').classList.add('open');
   switchCmdTab('catalogo');

@@ -98,6 +98,22 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cart-mob-send:disabled{opacity:.4;}
 .cart-mob-send:not(:disabled):active{transform:scale(.98);}
 
+/* ── TELA DE LOGIN ── */
+#sc-login{background:var(--bg);align-items:center;justify-content:center;flex-direction:column;gap:0;padding:20px;}
+.login-logo{font-family:'Bebas Neue',sans-serif;font-size:2.8rem;color:var(--am);letter-spacing:4px;margin-bottom:4px;}
+.login-sub{font-size:.72rem;color:var(--txt2);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:40px;}
+.login-card{background:var(--bg2);border:2px solid var(--border);border-radius:20px;padding:28px 24px;width:100%;max-width:360px;}
+.login-label{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;margin-bottom:14px;text-align:center;}
+.login-input{width:100%;padding:14px 16px;background:var(--bg);border:2px solid var(--border);border-radius:14px;color:var(--txt);font-family:'Nunito',sans-serif;font-weight:800;font-size:1rem;outline:none;text-align:center;letter-spacing:1px;transition:border-color .2s;margin-bottom:16px;}
+.login-input:focus{border-color:var(--am);}
+.login-input::placeholder{color:var(--txt2);opacity:.5;font-weight:700;letter-spacing:0;}
+.login-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;color:var(--az);cursor:pointer;transition:all .2s;}
+.login-btn:active{transform:scale(.98);}
+.login-hint{font-size:.65rem;color:var(--txt2);text-align:center;margin-top:12px;font-weight:700;}
+/* Badge do atendente no topo */
+.atendente-badge{background:rgba(245,196,0,.1);border:1px solid rgba(245,196,0,.25);border-radius:10px;padding:4px 12px;font-size:.68rem;font-weight:900;color:var(--am);cursor:pointer;white-space:nowrap;flex-shrink:0;}
+.atendente-badge:active{background:rgba(245,196,0,.2);}
+
 /* Toast / confirmação */
 .tablet-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--am);color:var(--az);padding:12px 24px;border-radius:14px;font-weight:900;font-size:.85rem;z-index:9999;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap;}
 .tablet-toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
@@ -119,13 +135,28 @@ const SUPA = window.supabase.createClient(
 </head>
 <body>
 
+<!-- ── TELA 0: Login do Atendente ── -->
+<div class="screen" id="sc-login">
+  <div class="login-logo">🍔 Skali Burg's</div>
+  <div class="login-sub">Tablet de Atendimento</div>
+  <div class="login-card">
+    <div class="login-label">👤 QUAL É O SEU NOME?</div>
+    <input type="text" id="login-nome-input" class="login-input" placeholder="Digite seu nome"
+      maxlength="30" autocomplete="off" autocorrect="off" spellcheck="false"
+      onkeydown="if(event.key==='Enter')loginEntrar()">
+    <button class="login-btn" onclick="loginEntrar()">✅ Entrar e Atender</button>
+    <div class="login-hint">Seu nome aparecerá no pedido para controle de vendas</div>
+  </div>
+</div>
+
 <!-- ── TELA 1: Selecionar Mesa ── -->
-<div class="screen active" id="sc-mesa">
+<div class="screen" id="sc-mesa">
   <div class="mesa-top">
     <div>
       <div class="mesa-brand">Skali Burg's</div>
       <div class="mesa-sub">Tablet de Atendimento</div>
     </div>
+    <button class="atendente-badge" id="atendente-badge-lbl" onclick="trocarAtendente()">👤 —</button>
   </div>
   <div class="mesa-grid-wrap">
     <div class="mesa-grid-title">SELECIONE A MESA</div>
@@ -138,6 +169,7 @@ const SUPA = window.supabase.createClient(
   <div class="pedido-topbar">
     <button class="ped-back" onclick="irParaMesas()">◀ Mesas</button>
     <div class="ped-title" id="ped-title">🪑 MESA 01</div>
+    <span id="ped-atendente-lbl" style="font-size:.62rem;color:var(--txt2);font-weight:900;flex-shrink:0;"></span>
     <button class="cart-bubble" onclick="irParaCarrinho()" id="cart-bubble">🛒 0 itens</button>
   </div>
   <div class="pedido-body">
@@ -267,12 +299,59 @@ var mesaAtualTab = null;
 var carrinho = []; // [{emoji, nome, preco, qty}]
 var catFiltro = 'all';
 var mesasStatusTab = {};
+var nomeAtendente = '';
 
 /* ── INIT ── */
 window.addEventListener('load', async function() {
-  await carregarMesasStatus();
-  renderMesaGrid();
+  // Verificar se já tem nome salvo
+  var nomeSalvo = localStorage.getItem('skali_atendente') || '';
+  if (nomeSalvo) {
+    nomeAtendente = nomeSalvo;
+    atualizarBadgeAtendente();
+    await carregarMesasStatus();
+    renderMesaGrid();
+    irParaScreen('sc-mesa');
+  } else {
+    irParaScreen('sc-login');
+    setTimeout(function(){ var inp = document.getElementById('login-nome-input'); if(inp) inp.focus(); }, 200);
+  }
 });
+
+/* ── LOGIN DO ATENDENTE ── */
+function loginEntrar() {
+  var input = document.getElementById('login-nome-input');
+  var nome = input ? input.value.trim() : '';
+  if (!nome || nome.length < 2) {
+    input.style.borderColor = 'var(--red)';
+    setTimeout(function(){ input.style.borderColor = ''; }, 1200);
+    tbToast('⚠️ Digite seu nome (mín. 2 caracteres)');
+    return;
+  }
+  nomeAtendente = nome;
+  localStorage.setItem('skali_atendente', nome);
+  atualizarBadgeAtendente();
+  carregarMesasStatus().then(function(){
+    renderMesaGrid();
+    irParaScreen('sc-mesa');
+  });
+}
+
+function trocarAtendente() {
+  // Limpa nome e volta para login
+  localStorage.removeItem('skali_atendente');
+  nomeAtendente = '';
+  var input = document.getElementById('login-nome-input');
+  if (input) input.value = '';
+  irParaScreen('sc-login');
+  setTimeout(function(){ if(input) input.focus(); }, 200);
+}
+
+function atualizarBadgeAtendente() {
+  var badge = document.getElementById('atendente-badge-lbl');
+  if (badge) badge.textContent = '👤 ' + nomeAtendente;
+  var pedLbl = document.getElementById('ped-atendente-lbl');
+  if (pedLbl) pedLbl.textContent = '👤 ' + nomeAtendente;
+}
 
 async function carregarMesasStatus() {
   try {
@@ -304,6 +383,7 @@ function selecionarMesa(num) {
   catFiltro = 'all';
   document.getElementById('ped-title').textContent = '🪑 MESA ' + String(num).padStart(2,'0');
   document.getElementById('mesa-lbl-cart').textContent = 'Mesa ' + String(num).padStart(2,'0');
+  atualizarBadgeAtendente();
   renderCats();
   renderItems();
   renderCartDesk();
@@ -482,12 +562,23 @@ async function enviarPedido() {
 
     var pedidoId = pedRow ? String(pedRow.id) : '';
 
-    // Registra itens na comanda da mesa
+    // Registra itens na comanda da mesa (com nome do atendente)
     var insItens = itensArr.map(function(i){
-      return { mesa_numero:num, item_nome:i.name, item_preco:i.price, emoji:i.emoji, status_pagamento:'pendente', pedido_id:pedidoId };
+      return { mesa_numero:num, item_nome:i.name, item_preco:i.price, emoji:i.emoji,
+               status_pagamento:'pendente', pedido_id:pedidoId, atendente_nome:nomeAtendente };
     });
     var { error: itErr } = await SUPA.from('itens_comanda_skali').insert(insItens);
-    if (itErr) throw itErr;
+    if (itErr) {
+      // Se coluna não existe ainda, tenta sem o campo (retrocompatível)
+      if (itErr.message && itErr.message.indexOf('atendente_nome') !== -1) {
+        var insItens2 = itensArr.map(function(i){
+          return { mesa_numero:num, item_nome:i.name, item_preco:i.price, emoji:i.emoji,
+                   status_pagamento:'pendente', pedido_id:pedidoId };
+        });
+        var { error: itErr2 } = await SUPA.from('itens_comanda_skali').insert(insItens2);
+        if (itErr2) throw itErr2;
+      } else { throw itErr; }
+    }
 
     // Marca mesa como ocupada
     var statusAtual = mesasStatusTab[num] || 'livre';
@@ -498,7 +589,7 @@ async function enviarPedido() {
 
     // Tela de confirmação
     var qtdTotal = carrinho.reduce(function(s,i){ return s+i.qty; }, 0);
-    document.getElementById('confirm-sub').textContent = 'Mesa '+String(num).padStart(2,'0')+' · '+qtdTotal+' item(s) · R$ '+total.toFixed(2).replace('.',',');
+    document.getElementById('confirm-sub').textContent = 'Mesa '+String(num).padStart(2,'0')+' · '+qtdTotal+' item(s) · R$ '+total.toFixed(2).replace('.',',')+' · 👤 '+nomeAtendente;
     irParaScreen('sc-confirm');
     carrinho = [];
     updateCartBubble();
