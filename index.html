@@ -377,8 +377,27 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-schip.ocupada{background:rgba(249,115,22,.15);color:var(--orange);border:1px solid rgba(249,115,22,.3);}
 .cmd-schip.conta{background:rgba(239,68,68,.15);color:var(--red);border:1px solid rgba(239,68,68,.3);}
 .cmd-content{display:flex;flex:1;overflow:hidden;}
-.cmd-prods{flex:1;overflow-y:auto;padding:16px;background:var(--bg);}
-.cmd-prods-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.cmd-prods{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg);}
+.cmd-tabs{display:flex;background:var(--bg2);border-bottom:2px solid var(--border);flex-shrink:0;}
+.cmd-tab{flex:1;padding:12px 10px;background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:900;font-size:.78rem;cursor:pointer;transition:all .2s;text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:6px;}
+.cmd-tab.active{color:var(--am);border-bottom-color:var(--am);}
+.cmd-tab:hover:not(.active){color:var(--txt);background:rgba(255,255,255,.04);}
+.cmd-tab-badge{background:var(--am);color:var(--az);font-size:.6rem;font-weight:900;padding:1px 6px;border-radius:8px;min-width:18px;text-align:center;}
+.cmd-tab-panel{flex:1;overflow-y:auto;padding:14px;}
+.cmd-tab-panel.hidden{display:none;}
+.cmd-cat-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.cmd-cat-pill{padding:5px 12px;border:1.5px solid var(--border);border-radius:20px;background:transparent;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:800;font-size:.62rem;cursor:pointer;transition:all .15s;text-transform:uppercase;white-space:nowrap;}
+.cmd-cat-pill.active{background:var(--am);color:var(--az);border-color:var(--am);}
+.cmd-cat-pill:hover:not(.active){border-color:rgba(245,196,0,.4);color:var(--txt);}
+.catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;}
+.catalog-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:8px 6px;cursor:pointer;transition:all .18s;text-align:center;user-select:none;position:relative;}
+.catalog-card:hover{border-color:var(--am);background:rgba(245,196,0,.08);transform:translateY(-2px);box-shadow:0 4px 14px rgba(245,196,0,.18);}
+.catalog-card:active{transform:scale(.96);}
+.catalog-card-emoji{font-size:2rem;line-height:1.2;margin-bottom:4px;}
+.catalog-card-name{font-size:.64rem;font-weight:900;color:var(--txt);line-height:1.3;margin-bottom:3px;}
+.catalog-card-price{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--am);}
+.catalog-adding{position:absolute;inset:0;background:rgba(245,196,0,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;animation:catalogAdd .35s ease;}
+@keyframes catalogAdd{from{opacity:0;transform:scale(.7);}to{opacity:1;transform:scale(1);}}
 .cmd-prods-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
 .cmd-prods-hint{font-size:.62rem;color:var(--txt2);font-weight:700;}
 .cprod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;}
@@ -716,20 +735,33 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
     <span id="cmd-rt-lbl" style="font-size:.62rem;color:var(--txt2);font-weight:700;">● Tempo Real</span>
   </div>
   <div class="cmd-content">
-    <!-- Esquerda: cards de produto -->
+    <!-- Esquerda: cardápio clicável + pedidos -->
     <div class="cmd-prods">
-      <div class="cmd-prods-hdr">
-        <div class="cmd-prods-title">ITENS DA MESA</div>
-        <div class="cmd-prods-hint">☑️ Marque os itens para fechar parcial</div>
+      <!-- Tabs -->
+      <div class="cmd-tabs">
+        <button class="cmd-tab active" id="cmd-tab-btn-catalogo" onclick="switchCmdTab('catalogo')">🛒 Cardápio</button>
+        <button class="cmd-tab" id="cmd-tab-btn-pedidos" onclick="switchCmdTab('pedidos')">📋 Pedidos <span class="cmd-tab-badge" id="cmd-pedidos-badge">0</span></button>
       </div>
-      <div class="cprod-grid" id="cprod-grid"></div>
-      <div class="cmd-add-inline" id="cmd-add-inline">
-        <div class="cmd-add-title">➕ ADICIONAR ITEM MANUAL</div>
-        <div class="cmd-add-row">
-          <input type="text" id="cmd-add-emoji" class="cmd-add-input cmd-add-emoji" placeholder="🍔" maxlength="4" style="width:50px;text-align:center;font-size:1.4rem;">
-          <input type="text" id="cmd-add-nome" class="cmd-add-input" placeholder="Nome do item" style="flex:1;">
-          <input type="number" id="cmd-add-preco" class="cmd-add-input" placeholder="Preço" step="0.50" min="0" style="width:90px;">
-          <button class="cmd-add-btn" onclick="adicionarItemManual()">＋</button>
+      <!-- Tab: CARDÁPIO -->
+      <div class="cmd-tab-panel" id="cmd-panel-catalogo">
+        <div class="cmd-cat-pills" id="cmd-cat-pills"></div>
+        <div class="catalog-grid" id="cmd-catalog-grid"></div>
+      </div>
+      <!-- Tab: PEDIDOS -->
+      <div class="cmd-tab-panel hidden" id="cmd-panel-pedidos">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <span style="font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--am);letter-spacing:2px;">ITENS DA MESA</span>
+          <span style="font-size:.62rem;color:var(--txt2);font-weight:700;">☑️ Marque para fechar parcial</span>
+        </div>
+        <div class="cprod-grid" id="cprod-grid"></div>
+        <div class="cmd-add-inline" id="cmd-add-inline" style="margin-top:16px;">
+          <div class="cmd-add-title">➕ ITEM AVULSO (não está no cardápio)</div>
+          <div class="cmd-add-row">
+            <input type="text" id="cmd-add-emoji" class="cmd-add-input cmd-add-emoji" placeholder="🍽️" maxlength="4" style="width:50px;text-align:center;font-size:1.3rem;">
+            <input type="text" id="cmd-add-nome" class="cmd-add-input" placeholder="Nome do item" style="flex:1;">
+            <input type="number" id="cmd-add-preco" class="cmd-add-input" placeholder="Preço" step="0.50" min="0" style="width:85px;">
+            <button class="cmd-add-btn" onclick="adicionarItemManual()">＋</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2333,6 +2365,7 @@ function closeComandaModal() {
 function renderComandaCards(num) {
   var grid = document.getElementById('cprod-grid');
   if (!grid) return;
+  atualizarBadgePedidos(num);
   var itens = mesaItensGlobais[num] || [];
   if (itens.length === 0) {
     grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--txt2);">Nenhum item lançado nesta mesa ainda.<br><small>Os pedidos do tablet aparecerão aqui em tempo real.</small></div>';
