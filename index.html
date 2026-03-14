@@ -2756,7 +2756,7 @@ async function calcConfirmar() {
     var totalSel = (mesaItensGlobais[num] || [])
       .filter(function(it){ return calcItensSelected.indexOf(it.id) !== -1; })
       .reduce(function(s, it){ return s + parseFloat(it.item_preco || 0); }, 0);
-    var pagamento = parseFloat(document.getElementById('calc-input').value) || 0;
+    var pagamento = parseFloat(document.getElementById('calc-valor-input').value) || 0;
     var excedente = pagamento - totalSel;
     if (excedente > 0.009) {
       var pgFmt = pagamento.toFixed(2).replace('.', ',');
