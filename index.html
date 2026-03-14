@@ -312,6 +312,97 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 }
 .login-role-chip.admin{background:rgba(245,196,0,.15);color:var(--am);border:1px solid rgba(245,196,0,.3);}
 .login-role-chip.balcao{background:rgba(59,130,246,.15);color:#60a5fa;border:1px solid rgba(59,130,246,.3);}
+
+/* ── MESAS ── */
+.mesa-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;padding:4px 0;}
+.mesa-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px 12px;cursor:pointer;transition:all .2s;text-align:center;user-select:none;}
+.mesa-card:hover{transform:translateY(-3px);}
+.mesa-card.livre{border-color:rgba(34,197,94,.3);}
+.mesa-card.livre:hover{border-color:var(--green);box-shadow:0 8px 24px rgba(34,197,94,.15);}
+.mesa-card.ocupada{border-color:rgba(249,115,22,.4);}
+.mesa-card.ocupada:hover{border-color:var(--orange);box-shadow:0 8px 24px rgba(249,115,22,.2);}
+.mesa-card.conta{border-color:rgba(239,68,68,.4);}
+.mesa-card.conta:hover{border-color:var(--red);box-shadow:0 8px 24px rgba(239,68,68,.2);}
+.mesa-num{font-family:'Bebas Neue',sans-serif;font-size:2.2rem;line-height:1;margin-bottom:2px;}
+.mesa-card.livre .mesa-num{color:var(--green);}
+.mesa-card.ocupada .mesa-num{color:var(--orange);}
+.mesa-card.conta .mesa-num{color:var(--red);}
+.mesa-slabel{font-size:.6rem;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+.mesa-card.livre .mesa-slabel{color:rgba(34,197,94,.7);}
+.mesa-card.ocupada .mesa-slabel{color:rgba(249,115,22,.8);}
+.mesa-card.conta .mesa-slabel{color:rgba(239,68,68,.8);}
+.mesa-info{font-size:.65rem;font-weight:800;color:var(--txt2);line-height:1.5;}
+.mesa-total{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);margin-top:4px;}
+/* mesa order modal */
+.m-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.m-overlay.open{display:flex;}
+.m-box{background:var(--bg2);border:2px solid var(--border);border-radius:16px;width:96%;max-width:960px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.m-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg2);flex-shrink:0;}
+.m-head-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);letter-spacing:2px;}
+.m-body{display:flex;flex:1;overflow:hidden;min-height:480px;}
+.m-menu{flex:1;overflow-y:auto;padding:14px;border-right:1px solid var(--border);}
+.m-cart{width:270px;flex-shrink:0;padding:14px;display:flex;flex-direction:column;}
+.m-cats{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.m-cat-btn{padding:4px 10px;border:1.5px solid var(--border);border-radius:8px;background:transparent;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:800;font-size:.63rem;cursor:pointer;transition:all .15s;text-transform:uppercase;}
+.m-cat-btn.active{background:var(--am);color:var(--az);border-color:var(--am);}
+.m-sec-title{font-family:'Bebas Neue',sans-serif;font-size:.8rem;color:var(--am);letter-spacing:2px;background:rgba(245,196,0,.08);border-left:3px solid var(--am);padding:5px 10px;border-radius:0 6px 6px 0;margin:8px 0;}
+.m-item{display:flex;align-items:center;gap:8px;padding:8px 6px;border-radius:8px;border:1px solid transparent;transition:all .15s;cursor:pointer;}
+.m-item:hover{background:rgba(245,196,0,.05);border-color:rgba(245,196,0,.15);}
+.m-item-emoji{font-size:1.3rem;flex-shrink:0;width:28px;text-align:center;}
+.m-item-info{flex:1;}
+.m-item-name{font-weight:900;font-size:.78rem;color:var(--txt);}
+.m-item-desc{font-size:.63rem;color:var(--txt2);font-weight:700;margin-top:1px;}
+.m-item-price{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--am);flex-shrink:0;}
+.m-add{background:var(--am);border:none;border-radius:8px;width:26px;height:26px;color:var(--az);font-size:1rem;font-weight:900;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.m-add:hover{background:var(--am2);}
+.m-cart-title{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--am);letter-spacing:2px;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid var(--border);}
+.m-cart-items{flex:1;overflow-y:auto;max-height:260px;margin-bottom:8px;}
+.m-cart-row{display:flex;align-items:center;gap:6px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.m-cr-em{font-size:1rem;flex-shrink:0;}
+.m-cr-name{flex:1;font-size:.7rem;font-weight:800;line-height:1.3;}
+.m-cr-price{font-family:'Bebas Neue',sans-serif;font-size:.82rem;color:var(--am);flex-shrink:0;}
+.m-cr-del{background:none;border:none;color:var(--red);cursor:pointer;font-size:.8rem;padding:2px;flex-shrink:0;}
+.m-cart-total{border-top:1px solid var(--border);padding:8px 0;display:flex;justify-content:space-between;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);margin-bottom:8px;}
+.m-send-btn{width:100%;padding:11px;background:linear-gradient(135deg,var(--am),var(--am2));border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.85rem;color:var(--az);cursor:pointer;transition:all .2s;}
+.m-send-btn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(245,196,0,.3);}
+.m-send-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+/* comanda modal */
+.cmd-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.cmd-overlay.open{display:flex;}
+.cmd-box{background:var(--bg2);border:2px solid var(--border);border-radius:16px;width:96%;max-width:680px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.cmd-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.cmd-head-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);letter-spacing:2px;}
+.cmd-body{padding:16px;overflow-y:auto;flex:1;}
+.cmd-item{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.cmd-item.pago{opacity:.38;}
+.cmd-check{width:17px;height:17px;cursor:pointer;accent-color:var(--am);flex-shrink:0;}
+.cmd-em{font-size:1.1rem;flex-shrink:0;}
+.cmd-name{flex:1;font-size:.78rem;font-weight:800;}
+.cmd-badge-pago{font-size:.55rem;font-weight:900;color:var(--green);background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);border-radius:5px;padding:1px 5px;margin-left:4px;}
+.cmd-price{font-family:'Bebas Neue',sans-serif;font-size:.88rem;color:var(--am);flex-shrink:0;}
+.cmd-time{font-size:.6rem;color:var(--txt2);font-weight:700;flex-shrink:0;margin-right:2px;}
+.cmd-totals{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:14px;}
+.cmd-tr{display:flex;justify-content:space-between;font-size:.75rem;font-weight:700;color:var(--txt2);margin-bottom:4px;}
+.cmd-tr.total{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
+.cmd-footer{padding:14px;border-top:1px solid var(--border);display:flex;gap:8px;flex-wrap:wrap;}
+.cmd-btn{flex:1;min-width:110px;padding:10px 12px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.75rem;cursor:pointer;transition:all .15s;text-align:center;}
+.cmd-btn.add{background:rgba(245,196,0,.1);color:var(--am);border:1.5px solid rgba(245,196,0,.3);}
+.cmd-btn.add:hover{background:rgba(245,196,0,.2);}
+.cmd-btn.partial{background:rgba(59,130,246,.1);color:#60a5fa;border:1.5px solid rgba(59,130,246,.3);}
+.cmd-btn.partial:hover{background:rgba(59,130,246,.2);}
+.cmd-btn.conta{background:rgba(249,115,22,.1);color:var(--orange);border:1.5px solid rgba(249,115,22,.3);}
+.cmd-btn.conta:hover{background:rgba(249,115,22,.2);}
+.cmd-btn.close{background:linear-gradient(135deg,var(--green),#16a34a);color:#fff;}
+.cmd-btn.close:hover{transform:translateY(-1px);}
+/* zerésima */
+.zer-overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.zer-overlay.open{display:flex;}
+.zer-box{background:var(--bg2);border:2px solid var(--border);border-radius:16px;width:96%;max-width:640px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 64px rgba(0,0,0,.7);}
+.zer-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.zer-body{padding:16px;overflow-y:auto;flex:1;}
+.zer-mesa-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
+.zer-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.75rem;font-weight:700;}
+.zer-total-box{background:rgba(245,196,0,.08);border:1.5px solid rgba(245,196,0,.3);border-radius:10px;padding:14px 16px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;}
 </style>
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -362,6 +453,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       <div class="sb-section">Principal</div>
       <button class="sb-btn" id="btn-dashboard" onclick="showView('dashboard',this)">📊 Dashboard<span class="sb-badge" id="badge-novos">0</span></button>
       <button class="sb-btn" id="btn-fila" onclick="showView('fila',this)">🎫 Fila de Pedidos<span class="sb-badge" id="badge-fila">0</span></button>
+      <button class="sb-btn" id="btn-mesas" onclick="showView('mesas',this)">🪑 Mesas</button>
       <button class="sb-btn" onclick="showView('historico',this)">📋 Histórico</button>
       <div class="sb-section" style="margin-top:8px;">Gestão</div>
       <button class="sb-btn" onclick="showView('clientes',this)">👥 Clientes</button>
@@ -558,7 +650,70 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
           <div id="comanda-preview"></div>
         </div>
       </div>
+
+      <div class="view" id="view-mesas">
+        <div class="section-title">
+          <div><h2>Mesas</h2><p>Atendimento presencial — toque em uma mesa para atender</p></div>
+          <button class="btn-am" style="font-size:.72rem;padding:7px 16px;background:rgba(255,255,255,.07);color:var(--txt2);border:1.5px solid rgba(255,255,255,.12);" onclick="showZeresima()">📊 Zerésima do Turno</button>
+        </div>
+        <div style="display:flex;gap:18px;margin-bottom:18px;align-items:center;flex-wrap:wrap;">
+          <span style="font-size:.7rem;font-weight:800;color:var(--green);">🟢 Livre — toque para atender</span>
+          <span style="font-size:.7rem;font-weight:800;color:var(--orange);">🟡 Ocupada — toque para ver comanda</span>
+          <span style="font-size:.7rem;font-weight:800;color:var(--red);">🔴 Conta pedida</span>
+        </div>
+        <div class="mesa-grid" id="mesa-grid"></div>
+      </div>
     </div>
+  </div>
+</div>
+
+<!-- MODAL: PEDIDO DE MESA -->
+<div class="m-overlay" id="mesa-order-overlay" onclick="if(event.target===this)closeMesaModal()">
+  <div class="m-box">
+    <div class="m-head">
+      <div class="m-head-title" id="mesa-modal-title">🪑 MESA 01 — NOVO PEDIDO</div>
+      <button class="modal-close" onclick="closeMesaModal()">✕</button>
+    </div>
+    <div class="m-body">
+      <div class="m-menu" id="mesa-menu-panel">
+        <div class="m-cats" id="mesa-cats"></div>
+        <div id="mesa-menu-items"></div>
+      </div>
+      <div class="m-cart">
+        <div class="m-cart-title">🛒 CARRINHO</div>
+        <div class="m-cart-items" id="mesa-cart-items"></div>
+        <div class="m-cart-total"><span>TOTAL</span><span id="mesa-cart-total">R$ 0,00</span></div>
+        <button class="m-send-btn" id="mesa-send-btn" onclick="enviarPedidoMesa()" disabled>✅ Enviar para Cozinha</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: COMANDA DA MESA -->
+<div class="cmd-overlay" id="comanda-overlay" onclick="if(event.target===this)closeComandaModal()">
+  <div class="cmd-box">
+    <div class="cmd-head">
+      <div class="cmd-head-title" id="comanda-modal-title">🧾 COMANDA — MESA 01</div>
+      <button class="modal-close" onclick="closeComandaModal()">✕</button>
+    </div>
+    <div class="cmd-body" id="comanda-body"></div>
+    <div class="cmd-footer">
+      <button class="cmd-btn add" onclick="closeComandaModal();setTimeout(function(){abrirMesaModal(mesaAtual)},150)">➕ Adicionar Itens</button>
+      <button class="cmd-btn partial" onclick="fecharParcial()">💳 Fechar Parcial</button>
+      <button class="cmd-btn conta" onclick="pedirContaMesa()">📋 Pedir Conta</button>
+      <button class="cmd-btn close" onclick="fecharMesaTotal()">✅ Fechar Mesa</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: ZERÉSIMA -->
+<div class="zer-overlay" id="zer-overlay" onclick="if(event.target===this)closeZeresima()">
+  <div class="zer-box">
+    <div class="zer-head">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--am);letter-spacing:2px;">📊 ZERÉSIMA DO TURNO</div>
+      <button class="modal-close" onclick="closeZeresima()">✕</button>
+    </div>
+    <div class="zer-body" id="zer-body"></div>
   </div>
 </div>
 
@@ -768,13 +923,14 @@ function showView(name, btn) {
   document.querySelectorAll('.sb-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('view-'+name).classList.add('active');
   if (btn) btn.classList.add('active');
-  var titles = {dashboard:'Dashboard',fila:'Fila de Pedidos',historico:'Histórico',clientes:'Clientes',impressao:'Central de Impressão'};
+  var titles = {dashboard:'Dashboard',fila:'Fila de Pedidos',mesas:'Mesas',historico:'Histórico',clientes:'Clientes',impressao:'Central de Impressão'};
   document.getElementById('view-title').textContent = titles[name] || name;
   if (name==='fila'||name==='dashboard') renderKanban();
   if (name==='historico') renderHistorico();
   if (name==='clientes')  renderClientes();
   if (name==='impressao') populateImpressao();
   if (name==='cardapio')  carLoad();
+  if (name==='mesas')     { loadMesasState().then(renderMesas); }
 }
 
 // ── CLOCK ──────────────────────────────
@@ -1829,6 +1985,442 @@ function doLogout() {
   document.getElementById('login-pass').value = '';
   document.getElementById('login-error').classList.remove('show');
   document.getElementById('login-user').focus();
+}
+
+// ════ SISTEMA DE MESAS ════════════════════════════════════
+
+var TOTAL_MESAS = 15;
+var mesaAtual = null;
+var mesaCartItems = [];
+var mesaItensGlobais = {};  // { mesaNum: [{id, item_nome, item_preco, emoji, status_pagamento, criado_em}] }
+var mesaStatusGlobais = {}; // { mesaNum: 'livre'|'ocupada'|'conta' }
+var mesaCatFilter = 'all';
+
+async function loadMesasState() {
+  try {
+    var res1 = await SUPA.from('mesas_skali').select('*').order('numero');
+    if (res1.error) { console.warn('mesas_skali indisponível:', res1.error.message); return; }
+    if (res1.data) {
+      res1.data.forEach(function(m){ mesaStatusGlobais[m.numero] = m.status || 'livre'; });
+    }
+    var res2 = await SUPA.from('itens_comanda_skali').select('*').order('criado_em');
+    if (!res2.error && res2.data) {
+      mesaItensGlobais = {};
+      res2.data.forEach(function(it){
+        if (!mesaItensGlobais[it.mesa_numero]) mesaItensGlobais[it.mesa_numero] = [];
+        mesaItensGlobais[it.mesa_numero].push(it);
+      });
+    }
+  } catch(e) { console.warn('Erro ao carregar mesas:', e); }
+}
+
+function renderMesas() {
+  var grid = document.getElementById('mesa-grid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  for (var i = 1; i <= TOTAL_MESAS; i++) {
+    (function(num){
+      var status = mesaStatusGlobais[num] || 'livre';
+      var itens = (mesaItensGlobais[num] || []).filter(function(it){ return it.status_pagamento === 'pendente'; });
+      var qtd = itens.length;
+      var total = itens.reduce(function(s,it){ return s + (parseFloat(it.item_preco)||0); }, 0);
+
+      var card = document.createElement('div');
+      card.className = 'mesa-card ' + status;
+      card.onclick = function(){ clickMesa(num); };
+
+      var icon = status === 'livre' ? '🟢' : (status === 'conta' ? '🔴' : '🟡');
+      var slabel = status === 'livre' ? 'Livre' : (status === 'conta' ? 'Conta Pedida' : 'Ocupada');
+      var extra = status !== 'livre'
+        ? '<div class="mesa-info">'+qtd+' item'+(qtd!==1?'s':'')+'</div><div class="mesa-total">R$ '+total.toFixed(2).replace('.',',')+'</div>'
+        : '<div class="mesa-info" style="color:rgba(34,197,94,.5);font-size:.72rem;">Toque para atender</div>';
+
+      card.innerHTML = '<div class="mesa-num">'+String(num).padStart(2,'0')+'</div>'
+        + '<div class="mesa-slabel">'+icon+' '+slabel+'</div>'
+        + extra;
+      grid.appendChild(card);
+    })(i);
+  }
+}
+
+function clickMesa(num) {
+  mesaAtual = num;
+  var status = mesaStatusGlobais[num] || 'livre';
+  if (status === 'livre') {
+    abrirMesaModal(num);
+  } else {
+    abrirComandaModal(num);
+  }
+}
+
+// ── MODAL PEDIDO MESA ──────────────────────────────────────
+function abrirMesaModal(num) {
+  mesaAtual = num;
+  mesaCartItems = [];
+  document.getElementById('mesa-modal-title').textContent = '🪑 MESA ' + String(num).padStart(2,'0') + ' — ADICIONAR ITENS';
+
+  // Categorias
+  var catsEl = document.getElementById('mesa-cats');
+  catsEl.innerHTML = '';
+  var allBtn = document.createElement('button');
+  allBtn.className = 'm-cat-btn active';
+  allBtn.textContent = 'Todos';
+  allBtn.onclick = function(){ filterMesaCat('all', allBtn); };
+  catsEl.appendChild(allBtn);
+
+  MENU.forEach(function(cat){
+    var btn = document.createElement('button');
+    btn.className = 'm-cat-btn';
+    btn.textContent = cat.icon + ' ' + cat.title;
+    btn.onclick = (function(id,el){ return function(){ filterMesaCat(id,el); }; })(cat.id, btn);
+    catsEl.appendChild(btn);
+  });
+
+  mesaCatFilter = 'all';
+  renderMesaMenu();
+  renderMesaCart();
+  document.getElementById('mesa-order-overlay').classList.add('open');
+}
+
+function closeMesaModal() {
+  document.getElementById('mesa-order-overlay').classList.remove('open');
+  mesaCartItems = [];
+}
+
+function filterMesaCat(id, btn) {
+  mesaCatFilter = id;
+  document.querySelectorAll('.m-cat-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderMesaMenu();
+}
+
+function escStr(s) { return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
+
+function renderMesaMenu() {
+  var panel = document.getElementById('mesa-menu-items');
+  panel.innerHTML = '';
+  var lista = mesaCatFilter === 'all' ? MENU : MENU.filter(function(c){ return c.id === mesaCatFilter; });
+
+  lista.forEach(function(cat){
+    var secDiv = document.createElement('div');
+    secDiv.className = 'm-sec-title';
+    secDiv.textContent = cat.icon + ' ' + cat.title;
+    panel.appendChild(secDiv);
+
+    cat.subs.forEach(function(sub){
+      if (sub.title) {
+        var stDiv = document.createElement('div');
+        stDiv.style.cssText = 'font-size:.63rem;font-weight:900;color:var(--txt2);margin:8px 0 4px;text-transform:uppercase;letter-spacing:1px;';
+        stDiv.textContent = sub.title;
+        panel.appendChild(stDiv);
+      }
+      sub.items.forEach(function(item){
+        var row = document.createElement('div');
+        row.className = 'm-item';
+        var em = item.e || '🍽️';
+        var desc = item.d ? '<div class="m-item-desc">'+item.d+'</div>' : '';
+        row.innerHTML = '<div class="m-item-emoji">'+em+'</div>'
+          + '<div class="m-item-info"><div class="m-item-name">'+item.n+'</div>'+desc+'</div>'
+          + '<div class="m-item-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
+          + '<button class="m-add" onclick="addToMesaCart(\''+escStr(em)+'\',\''+escStr(item.n)+'\','+item.p+')">+</button>';
+        panel.appendChild(row);
+      });
+    });
+  });
+}
+
+function addToMesaCart(emoji, nome, preco) {
+  mesaCartItems.push({ emoji: emoji, nome: nome, preco: parseFloat(preco) });
+  renderMesaCart();
+  showToast('➕ ' + nome + ' adicionado');
+}
+
+function removeFromMesaCart(idx) {
+  mesaCartItems.splice(idx, 1);
+  renderMesaCart();
+}
+
+function renderMesaCart() {
+  var listEl = document.getElementById('mesa-cart-items');
+  var totalEl = document.getElementById('mesa-cart-total');
+  var sendBtn = document.getElementById('mesa-send-btn');
+  listEl.innerHTML = '';
+  var total = 0;
+
+  if (mesaCartItems.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center;padding:30px 0;color:var(--txt2);font-size:.75rem;">Nenhum item adicionado</div>';
+  } else {
+    mesaCartItems.forEach(function(item, idx){
+      total += item.preco;
+      var row = document.createElement('div');
+      row.className = 'm-cart-row';
+      row.innerHTML = '<span class="m-cr-em">'+item.emoji+'</span>'
+        + '<span class="m-cr-name">'+item.nome+'</span>'
+        + '<span class="m-cr-price">R$ '+item.preco.toFixed(2).replace('.',',')+'</span>'
+        + '<button class="m-cr-del" onclick="removeFromMesaCart('+idx+')">✕</button>';
+      listEl.appendChild(row);
+    });
+  }
+  totalEl.textContent = 'R$ ' + total.toFixed(2).replace('.',',');
+  sendBtn.disabled = mesaCartItems.length === 0;
+}
+
+async function enviarPedidoMesa() {
+  if (mesaCartItems.length === 0) return;
+  var num = mesaAtual;
+  var sendBtn = document.getElementById('mesa-send-btn');
+  sendBtn.disabled = true;
+  sendBtn.textContent = '⏳ Enviando...';
+
+  try {
+    var now = new Date();
+    var hora = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+    var total = mesaCartItems.reduce(function(s,i){ return s + i.preco; }, 0);
+    var itensArr = mesaCartItems.map(function(i){
+      return { emoji: i.emoji, name: i.nome, price: i.preco, qty: 1, category: 'mesa' };
+    });
+
+    // Cria pedido na fila kanban
+    var pedidoPayload = {
+      cliente: 'Mesa ' + String(num).padStart(2,'0'),
+      telefone: '',
+      endereco: 'Atendimento presencial',
+      entrega: 'Mesa ' + String(num).padStart(2,'0'),
+      pagamento: 'mesa',
+      troco: '',
+      itens: itensArr,
+      total: total,
+      taxa: 0,
+      status: 'recebido',
+      hora: hora,
+      nota: 'Pedido de mesa presencial'
+    };
+
+    var { data: pedRow, error: pedErr } = await SUPA.from('pedidos_skali').insert([pedidoPayload]).select().single();
+    if (pedErr) throw pedErr;
+    var pedidoId = pedRow ? String(pedRow.id) : '';
+
+    // Salva itens na comanda
+    var itensInsert = mesaCartItems.map(function(i){
+      return {
+        mesa_numero: num,
+        item_nome: i.nome,
+        item_preco: i.preco,
+        emoji: i.emoji,
+        status_pagamento: 'pendente',
+        pedido_id: pedidoId
+      };
+    });
+    var { data: novosItens, error: itErr } = await SUPA.from('itens_comanda_skali').insert(itensInsert).select();
+    if (itErr) throw itErr;
+
+    // Atualiza status da mesa para 'ocupada' se era livre
+    if ((mesaStatusGlobais[num] || 'livre') === 'livre') {
+      await SUPA.from('mesas_skali').update({ status: 'ocupada', aberta_em: now.toISOString() }).eq('numero', num);
+      mesaStatusGlobais[num] = 'ocupada';
+    }
+
+    // Atualiza estado local
+    if (!mesaItensGlobais[num]) mesaItensGlobais[num] = [];
+    if (novosItens) {
+      novosItens.forEach(function(it){ mesaItensGlobais[num].push(it); });
+    } else {
+      itensInsert.forEach(function(it, idx){
+        mesaItensGlobais[num].push(Object.assign({}, it, { id: Date.now() + idx, criado_em: now.toISOString() }));
+      });
+    }
+
+    showToast('✅ Pedido enviado para a cozinha!');
+    closeMesaModal();
+    renderMesas();
+
+  } catch(e) {
+    console.error('Erro ao enviar pedido de mesa:', e);
+    var msg = e && e.message ? e.message : String(e);
+    if (msg.indexOf('mesas_skali') !== -1 || msg.indexOf('itens_comanda') !== -1) {
+      showToast('⚠️ Crie as tabelas no Supabase primeiro!');
+    } else {
+      showToast('❌ Erro ao enviar pedido');
+    }
+    sendBtn.disabled = false;
+    sendBtn.textContent = '✅ Enviar para Cozinha';
+  }
+}
+
+// ── MODAL COMANDA ──────────────────────────────────────────
+function abrirComandaModal(num) {
+  mesaAtual = num;
+  document.getElementById('comanda-modal-title').textContent = '🧾 COMANDA — MESA ' + String(num).padStart(2,'0');
+  renderComanda(num);
+  document.getElementById('comanda-overlay').classList.add('open');
+}
+
+function closeComandaModal() {
+  document.getElementById('comanda-overlay').classList.remove('open');
+}
+
+function renderComanda(num) {
+  var body = document.getElementById('comanda-body');
+  var itens = mesaItensGlobais[num] || [];
+  var pendentes = itens.filter(function(i){ return i.status_pagamento === 'pendente'; });
+  var pagos = itens.filter(function(i){ return i.status_pagamento === 'pago'; });
+  var totPend = pendentes.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+  var totPago = pagos.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+  var totGeral = totPend + totPago;
+
+  var html = '';
+
+  if (pendentes.length === 0 && pagos.length === 0) {
+    html = '<div style="text-align:center;padding:30px;color:var(--txt2);">Nenhum item na comanda</div>';
+  } else {
+    if (pendentes.length > 0) {
+      html += '<div style="font-size:.63rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">Em Aberto — selecione para fechar parcial</div>';
+      pendentes.forEach(function(it){
+        var hr = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+        html += '<div class="cmd-item">'
+          + '<input class="cmd-check" type="checkbox" data-id="'+it.id+'" data-preco="'+it.item_preco+'">'
+          + '<span class="cmd-em">'+(it.emoji||'🍽️')+'</span>'
+          + '<span class="cmd-name">'+it.item_nome+'</span>'
+          + (hr ? '<span class="cmd-time">'+hr+'</span>' : '')
+          + '<span class="cmd-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span>'
+          + '</div>';
+      });
+    }
+    if (pagos.length > 0) {
+      html += '<div style="font-size:.63rem;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin:14px 0 8px;">✅ Já Pago</div>';
+      pagos.forEach(function(it){
+        html += '<div class="cmd-item pago">'
+          + '<span class="cmd-em">'+(it.emoji||'🍽️')+'</span>'
+          + '<span class="cmd-name">'+it.item_nome+'<span class="cmd-badge-pago">PAGO</span></span>'
+          + '<span class="cmd-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span>'
+          + '</div>';
+      });
+    }
+  }
+
+  html += '<div class="cmd-totals">'
+    + (pagos.length > 0 ? '<div class="cmd-tr"><span>Já pago</span><span style="color:var(--green)">R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>' : '')
+    + '<div class="cmd-tr"><span>Em aberto</span><span>R$ '+totPend.toFixed(2).replace('.',',')+'</span></div>'
+    + '<div class="cmd-tr total"><span>TOTAL GERAL</span><span>R$ '+totGeral.toFixed(2).replace('.',',')+'</span></div>'
+    + '</div>';
+
+  body.innerHTML = html;
+}
+
+async function fecharParcial() {
+  var checks = document.querySelectorAll('#comanda-body .cmd-check:checked');
+  if (checks.length === 0) { showToast('⚠️ Selecione os itens a pagar'); return; }
+
+  var ids = Array.from(checks).map(function(c){ return parseInt(c.getAttribute('data-id')); });
+  var total = Array.from(checks).reduce(function(s,c){ return s + parseFloat(c.getAttribute('data-preco')||0); }, 0);
+
+  try {
+    await SUPA.from('itens_comanda_skali').update({ status_pagamento: 'pago' }).in('id', ids);
+    var num = mesaAtual;
+    if (mesaItensGlobais[num]) {
+      mesaItensGlobais[num].forEach(function(it){
+        if (ids.indexOf(it.id) !== -1) it.status_pagamento = 'pago';
+      });
+    }
+    showToast('✅ Parcial: R$ ' + total.toFixed(2).replace('.',',') + ' registrado');
+    renderComanda(num);
+    renderMesas();
+  } catch(e) { showToast('❌ Erro ao registrar pagamento'); }
+}
+
+async function pedirContaMesa() {
+  var num = mesaAtual;
+  try {
+    await SUPA.from('mesas_skali').update({ status: 'conta' }).eq('numero', num);
+    mesaStatusGlobais[num] = 'conta';
+    showToast('📋 Conta pedida na Mesa ' + String(num).padStart(2,'0'));
+    renderMesas();
+    renderComanda(num);
+  } catch(e) { showToast('❌ Erro ao atualizar status'); }
+}
+
+async function fecharMesaTotal() {
+  var num = mesaAtual;
+  var itens = mesaItensGlobais[num] || [];
+  var pendentes = itens.filter(function(i){ return i.status_pagamento === 'pendente'; });
+
+  try {
+    if (pendentes.length > 0) {
+      var ids = pendentes.map(function(i){ return i.id; });
+      await SUPA.from('itens_comanda_skali').update({ status_pagamento: 'pago' }).in('id', ids);
+    }
+    await SUPA.from('mesas_skali').update({ status: 'livre', fechada_em: new Date().toISOString() }).eq('numero', num);
+    mesaStatusGlobais[num] = 'livre';
+    mesaItensGlobais[num] = [];
+    showToast('✅ Mesa ' + String(num).padStart(2,'0') + ' fechada com sucesso!');
+    closeComandaModal();
+    renderMesas();
+  } catch(e) { showToast('❌ Erro ao fechar mesa'); }
+}
+
+// ── ZERÉSIMA ──────────────────────────────────────────────
+async function showZeresima() {
+  document.getElementById('zer-overlay').classList.add('open');
+  var body = document.getElementById('zer-body');
+  body.innerHTML = '<div style="text-align:center;padding:24px;color:var(--txt2);">⏳ Carregando...</div>';
+
+  try {
+    var hoje = new Date().toISOString().split('T')[0];
+    var { data: itens, error } = await SUPA.from('itens_comanda_skali')
+      .select('*').gte('criado_em', hoje + 'T00:00:00').order('mesa_numero');
+
+    if (error) throw error;
+
+    if (!itens || itens.length === 0) {
+      body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--txt2);">Nenhum consumo registrado hoje</div>';
+      return;
+    }
+
+    var byMesa = {};
+    itens.forEach(function(it){
+      var m = it.mesa_numero;
+      if (!byMesa[m]) byMesa[m] = [];
+      byMesa[m].push(it);
+    });
+
+    var totalGeral = itens.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+    var html = '';
+
+    Object.keys(byMesa).sort(function(a,b){ return parseInt(a)-parseInt(b); }).forEach(function(m){
+      var mItens = byMesa[m];
+      var totMesa = mItens.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+      html += '<div class="zer-mesa-card">'
+        + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">'
+        + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;">MESA ' + String(m).padStart(2,'0') + '</span>'
+        + '<span style="font-family:\'Bebas Neue\',sans-serif;font-size:.95rem;color:var(--am);">R$ ' + totMesa.toFixed(2).replace('.',',') + '</span>'
+        + '</div>';
+      mItens.forEach(function(it){
+        var hr = it.criado_em ? new Date(it.criado_em).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '';
+        var pago = it.status_pagamento === 'pago';
+        html += '<div class="zer-item">'
+          + '<span>'+(it.emoji||'🍽️')+' '+it.item_nome+(pago?' <span style="color:var(--green);font-size:.6rem;">✅</span>':'')+'</span>'
+          + '<span style="display:flex;gap:8px;align-items:center;">'
+          + (hr ? '<span style="font-size:.6rem;color:var(--txt2);">'+hr+'</span>' : '')
+          + '<span>R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></span>'
+          + '</div>';
+      });
+      html += '</div>';
+    });
+
+    html += '<div class="zer-total-box">'
+      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.1rem;color:var(--am);letter-spacing:2px;">TOTAL DO TURNO</div>'
+      + '<div style="font-family:\'Bebas Neue\',sans-serif;font-size:1.4rem;color:var(--am);">R$ '+totalGeral.toFixed(2).replace('.',',')+'</div>'
+      + '</div>';
+
+    body.innerHTML = html;
+  } catch(e) {
+    console.error('Zerésima erro:', e);
+    body.innerHTML = '<div style="text-align:center;padding:30px;color:var(--red);font-size:.8rem;">❌ Erro ao carregar dados.<br>Verifique se as tabelas Supabase foram criadas.</div>';
+  }
+}
+
+function closeZeresima() {
+  document.getElementById('zer-overlay').classList.remove('open');
 }
 
 if (typeof window !== 'undefined') {
