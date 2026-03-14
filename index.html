@@ -394,8 +394,14 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cprod-price{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);text-align:center;}
 .cprod-pago-lbl{display:block;text-align:center;font-size:.52rem;font-weight:900;color:var(--green);margin-top:3px;}
 .cprod-hr{display:block;text-align:center;font-size:.56rem;color:var(--txt2);margin-top:2px;}
-.cmd-addmore-btn{margin-top:14px;width:100%;padding:12px;background:rgba(245,196,0,.06);border:1.5px dashed rgba(245,196,0,.25);border-radius:12px;color:var(--am);font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;transition:all .2s;}
-.cmd-addmore-btn:hover{background:rgba(245,196,0,.13);border-style:solid;}
+.cmd-add-inline{margin-top:14px;padding:12px 14px;background:rgba(245,196,0,.06);border:1.5px dashed rgba(245,196,0,.25);border-radius:12px;}
+.cmd-add-title{font-family:'Nunito',sans-serif;font-weight:900;font-size:.7rem;color:var(--am);margin-bottom:8px;letter-spacing:1px;}
+.cmd-add-row{display:flex;gap:6px;align-items:center;}
+.cmd-add-input{padding:8px 10px;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;color:var(--txt);font-family:'Nunito',sans-serif;font-weight:700;font-size:.75rem;outline:none;transition:border-color .2s;}
+.cmd-add-input:focus{border-color:var(--am);}
+.cmd-add-input::placeholder{color:var(--txt2);opacity:.6;}
+.cmd-add-btn{padding:8px 16px;background:var(--am);border:none;border-radius:8px;color:var(--az);font-family:'Nunito',sans-serif;font-weight:900;font-size:1rem;cursor:pointer;transition:all .15s;}
+.cmd-add-btn:hover{transform:scale(1.05);box-shadow:0 2px 8px rgba(245,196,0,.3);}
 .cmd-bill{width:290px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
 .cmd-bill-hdr{padding:14px 16px;border-bottom:1px solid var(--border);}
 .cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
@@ -698,27 +704,7 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
   </div>
 </div>
 
-<!-- MODAL: PEDIDO DE MESA -->
-<div class="m-overlay" id="mesa-order-overlay" onclick="if(event.target===this)closeMesaModal()">
-  <div class="m-box">
-    <div class="m-head">
-      <div class="m-head-title" id="mesa-modal-title">🪑 MESA 01 — NOVO PEDIDO</div>
-      <button class="modal-close" onclick="closeMesaModal()">✕</button>
-    </div>
-    <div class="m-body">
-      <div class="m-menu" id="mesa-menu-panel">
-        <div class="m-cats" id="mesa-cats"></div>
-        <div id="mesa-menu-items"></div>
-      </div>
-      <div class="m-cart">
-        <div class="m-cart-title">🛒 CARRINHO</div>
-        <div class="m-cart-items" id="mesa-cart-items"></div>
-        <div class="m-cart-total"><span>TOTAL</span><span id="mesa-cart-total">R$ 0,00</span></div>
-        <button class="m-send-btn" id="mesa-send-btn" onclick="enviarPedidoMesa()" disabled>✅ Enviar para Cozinha</button>
-      </div>
-    </div>
-  </div>
-</div>
+<!-- Modal de cardápio removido — pedidos vêm exclusivamente do tablet -->
 
 <!-- COMANDA FULL-SCREEN -->
 <div class="cmd-overlay" id="comanda-overlay">
@@ -737,7 +723,15 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <div class="cmd-prods-hint">☑️ Marque os itens para fechar parcial</div>
       </div>
       <div class="cprod-grid" id="cprod-grid"></div>
-      <button class="cmd-addmore-btn" onclick="closeComandaModal();setTimeout(function(){abrirMesaModal(mesaAtual)},150)">➕ Adicionar Itens Manualmente</button>
+      <div class="cmd-add-inline" id="cmd-add-inline">
+        <div class="cmd-add-title">➕ ADICIONAR ITEM MANUAL</div>
+        <div class="cmd-add-row">
+          <input type="text" id="cmd-add-emoji" class="cmd-add-input cmd-add-emoji" placeholder="🍔" maxlength="4" style="width:50px;text-align:center;font-size:1.4rem;">
+          <input type="text" id="cmd-add-nome" class="cmd-add-input" placeholder="Nome do item" style="flex:1;">
+          <input type="number" id="cmd-add-preco" class="cmd-add-input" placeholder="Preço" step="0.50" min="0" style="width:90px;">
+          <button class="cmd-add-btn" onclick="adicionarItemManual()">＋</button>
+        </div>
+      </div>
     </div>
     <!-- Direita: comanda e ações -->
     <div class="cmd-bill">
@@ -2138,12 +2132,7 @@ function renderMesas() {
 
 function clickMesa(num) {
   mesaAtual = num;
-  var status = mesaStatusGlobais[num] || 'livre';
-  if (status === 'livre') {
-    abrirMesaModal(num);
-  } else {
-    abrirComandaModal(num);
-  }
+  abrirComandaModal(num);
 }
 
 // ── MODAL ADICIONAR ITENS (do painel) ─────────────────────
@@ -2282,6 +2271,42 @@ async function enviarPedidoMesa() {
     console.error(e);
     showToast('❌ ' + (e && e.message ? e.message : 'Erro ao enviar'));
     sendBtn.disabled = false; sendBtn.textContent = '✅ Enviar para Cozinha';
+  }
+}
+
+// ── ADICIONAR ITEM MANUAL (balconista) ──────────────────────
+async function adicionarItemManual() {
+  var emoji = (document.getElementById('cmd-add-emoji').value || '🍽️').trim();
+  var nome  = document.getElementById('cmd-add-nome').value.trim();
+  var preco = parseFloat(document.getElementById('cmd-add-preco').value);
+  if (!nome) { showToast('⚠️ Informe o nome do item'); return; }
+  if (!preco || preco <= 0) { showToast('⚠️ Informe o preço'); return; }
+  var num = mesaAtual;
+  try {
+    var ins = [{ mesa_numero: num, item_nome: nome, item_preco: preco, emoji: emoji, status_pagamento: 'pendente', pedido_id: 'manual-' + Date.now() }];
+    var resp = await SUPA.from('itens_comanda_skali').insert(ins).select();
+    if (resp.error) throw resp.error;
+    var novos = resp.data || [];
+    // atualizar mesa para ocupada se estava livre
+    if ((mesaStatusGlobais[num] || 'livre') === 'livre') {
+      await SUPA.from('mesas_skali').update({ status:'ocupada', aberta_em: new Date().toISOString() }).eq('numero', num);
+      mesaStatusGlobais[num] = 'ocupada';
+      var chipEl = document.getElementById('cmd-schip');
+      if (chipEl) { chipEl.textContent = '🟡 Ocupada'; chipEl.className = 'cmd-schip ocupada'; }
+    }
+    if (!mesaItensGlobais[num]) mesaItensGlobais[num] = [];
+    novos.forEach(function(it){ mesaItensGlobais[num].push(it); });
+    renderComandaCards(num);
+    renderComandaBill(num);
+    renderMesas();
+    // limpar campos
+    document.getElementById('cmd-add-emoji').value = '';
+    document.getElementById('cmd-add-nome').value = '';
+    document.getElementById('cmd-add-preco').value = '';
+    showToast('✅ Item adicionado: ' + emoji + ' ' + nome);
+  } catch(e) {
+    console.error(e);
+    showToast('❌ Erro: ' + (e && e.message ? e.message : 'Falha ao adicionar'));
   }
 }
 
