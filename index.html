@@ -435,6 +435,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cust-ad-tag{padding:6px 12px;background:rgba(245,196,0,.05);border:1.5px solid rgba(245,196,0,.18);border-radius:20px;font-size:.72rem;font-weight:800;cursor:pointer;transition:all .15s;color:var(--txt2);user-select:none;}
 .cust-ad-tag.selected{background:rgba(245,196,0,.16);border-color:var(--am);color:var(--am);}
 .cust-ad-price{font-size:.6rem;color:var(--am);margin-left:2px;}
+.cust-ad-section-lbl{width:100%;font-size:.65rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.cust-ad-tag[data-tipo="carne"]{border-color:rgba(239,68,68,.3);color:var(--red);}
+.cust-ad-tag[data-tipo="carne"] .cust-ad-price{color:var(--red);}
+.cust-ad-tag[data-tipo="carne"].selected{background:rgba(239,68,68,.15);border-color:var(--red);color:var(--red);}
 .cmd-cust-footer{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:8px;flex-shrink:0;}
 .cmd-cust-cancel{flex:1;padding:11px;background:rgba(255,255,255,.05);border:1.5px solid var(--border);border-radius:10px;color:var(--txt2);font-family:'Nunito',sans-serif;font-weight:900;font-size:.8rem;cursor:pointer;transition:background .15s;}
 .cmd-cust-cancel:hover{background:rgba(255,255,255,.1);}
@@ -472,20 +476,21 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-bill-hdr{padding:14px 16px;border-bottom:1px solid var(--border);}
 .cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
 .cmd-bill-sub{font-size:.6rem;color:var(--txt2);font-weight:700;margin-top:2px;}
-.cmd-bill-rows{flex:1;overflow-y:auto;padding:6px 16px;}
-.cmd-brow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.82rem;font-weight:700;color:var(--txt);}
-.cmd-brow.sel-row{color:var(--am);background:rgba(245,196,0,.06);border-radius:6px;padding:8px 6px;}
-.cmd-brow.pago-brow{opacity:.55;}
-.cmd-brow-em{font-size:1rem;flex-shrink:0;}
+.cmd-bill-rows{flex:1;min-height:120px;overflow-y:auto;padding:4px 12px 6px;}
+.cmd-brow{display:flex;align-items:flex-start;gap:6px;padding:7px 6px;border-radius:8px;margin-bottom:2px;font-size:.84rem;font-weight:700;color:var(--txt);border:1px solid transparent;}
+.cmd-brow:nth-child(odd){background:rgba(255,255,255,.03);}
+.cmd-brow.sel-row{color:var(--am);background:rgba(245,196,0,.09);border-color:rgba(245,196,0,.2);}
+.cmd-brow.pago-brow{opacity:.5;text-decoration:line-through;text-decoration-color:rgba(255,255,255,.2);}
+.cmd-brow-em{font-size:1.05rem;flex-shrink:0;margin-top:1px;}
 .cmd-brow-name{flex:1;line-height:1.4;word-break:break-word;}
-.cmd-brow-price{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--am);white-space:nowrap;flex-shrink:0;}
+.cmd-brow-price{font-family:'Bebas Neue',sans-serif;font-size:.95rem;color:var(--am);white-space:nowrap;flex-shrink:0;}
 .cmd-brow.pago-brow .cmd-brow-price{color:var(--green);}
 .cmd-totals-box{padding:12px 16px;border-top:1px solid var(--border);}
 .cmd-trow{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:var(--txt2);margin-bottom:5px;}
 .cmd-trow.sel-total{color:var(--am);}
 .cmd-trow.pago-total{color:var(--green);}
 .cmd-trow.grand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
-.cmd-actions{overflow-y:auto;padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;}
+.cmd-actions{overflow-y:auto;max-height:340px;padding:10px 14px 14px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:7px;flex-shrink:0;}
 .cmd-act{width:100%;padding:10px 14px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.76rem;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px;}
 .cmd-act.partial{background:rgba(59,130,246,.1);color:#60a5fa;border:1.5px solid rgba(59,130,246,.3);}
 .cmd-act.partial:hover{background:rgba(59,130,246,.2);}
@@ -1017,11 +1022,13 @@ var MENU=[
   }
 ];
 var ADICIONAIS=[
-  {n:"Filé de Frango",p:7},{n:"Filé Bovino",p:11},{n:"Hambúrguer",p:7},
-  {n:"Lombo de Porco",p:7},{n:"Bacon",p:4},{n:"Queijo",p:4},{n:"Ovo",p:4},
-  {n:"Salsicha",p:4},{n:"Catupiry",p:4},{n:"Cheddar",p:4},{n:"Presunto",p:4},
-  {n:"Calabresa",p:4},{n:"Palmito",p:4},{n:"Cebola",p:2},{n:"Abacaxi",p:2},
-  {n:"Milho",p:2},{n:"Batata",p:2}
+  // Carnes (sempre pagas, sem limite)
+  {n:"Filé de Frango",p:7,carne:true},{n:"Filé Bovino",p:11,carne:true},{n:"Hambúrguer",p:7,carne:true},
+  {n:"Lombo de Porco",p:7,carne:true},{n:"Bacon",p:4,carne:true},{n:"Salsicha",p:4,carne:true},
+  {n:"Presunto",p:4,carne:true},{n:"Calabresa",p:4,carne:true},
+  // Não-carnes (máx. 1 por pedido)
+  {n:"Queijo",p:4},{n:"Ovo",p:4},{n:"Catupiry",p:4},{n:"Cheddar",p:4},
+  {n:"Palmito",p:4},{n:"Cebola",p:2},{n:"Abacaxi",p:2},{n:"Milho",p:2},{n:"Batata",p:2}
 ];
 var SUCOS_LIST=["🍍 Abacaxi","🍍 Abacaxi c/ Hortelã","🫐 Açaí","🍒 Acerola","🍫 Cupuaçu","🥜 Caju","🟡 Cajá","🍫 Cacau","🍈 Goiaba","💚 Graviola","🟠 Maracujá","🍓 Morango","🍑 Pêssego","🍇 Uva","🟤 Tamarindo","🍋 Limão"];
 var CREMES_LIST=["🍍 Abacaxi","🍍 Abacaxi c/ Hortelã","🫐 Açaí","🍒 Acerola","🍫 Cupuaçu","🥜 Caju","🟡 Cajá","🍫 Cacau","🍈 Goiaba","💚 Graviola","🟠 Maracujá","🍓 Morango","🍑 Pêssego","🍇 Uva","🟤 Tamarindo"];
@@ -2578,12 +2585,20 @@ function abrirCustSanduiche(emoji, nome, preco, desc, cardEl) {
     ingGrid.innerHTML = '<span style="font-size:.7rem;color:var(--txt2);">Padrão — sem ingredientes customizáveis</span>';
   }
 
-  // Adicionais
+  // Adicionais — separados em carnes e não-carnes
   var adGrid = document.getElementById('cust-ad-grid');
-  adGrid.innerHTML = ADICIONAIS.map(function(a){
-    return '<span class="cust-ad-tag" data-name="'+a.n+'" data-price="'+a.p+'" onclick="custToggleAd(this)">'
+  var carnes   = ADICIONAIS.filter(function(a){ return a.carne; });
+  var extras   = ADICIONAIS.filter(function(a){ return !a.carne; });
+  function adTag(a) {
+    var tipo = a.carne ? 'carne' : 'extra';
+    return '<span class="cust-ad-tag" data-name="'+a.n+'" data-price="'+a.p+'" data-tipo="'+tipo+'" onclick="custToggleAd(this)">'
       + a.n + ' <span class="cust-ad-price">+R$ '+a.p.toFixed(2).replace('.',',')+'</span></span>';
-  }).join('');
+  }
+  adGrid.innerHTML =
+    '<div class="cust-ad-section-lbl">🥩 Carnes adicionais <span style="font-size:.58rem;color:var(--txt2);font-weight:400;">(sempre pago, sem limite)</span></div>'
+    + carnes.map(adTag).join('')
+    + '<div class="cust-ad-section-lbl" style="margin-top:10px;">🧀 Outros extras <span id="cust-extra-aviso" style="font-size:.58rem;color:var(--txt2);font-weight:400;">(máx. 1 grátis)</span></div>'
+    + extras.map(adTag).join('');
 
   custAtualizarTotal();
   document.getElementById('cmd-cust-overlay').classList.add('open');
@@ -2601,14 +2616,26 @@ function custToggleIng(el) {
 }
 
 function custToggleAd(el) {
-  el.classList.toggle('selected');
-  var name = el.dataset.name;
+  var name  = el.dataset.name;
   var price = parseFloat(el.dataset.price);
-  var existing = custSandState.extras.findIndex(function(x){ return x.n === name; });
+  var tipo  = el.dataset.tipo; // 'carne' ou 'extra'
+
   if (el.classList.contains('selected')) {
-    if (existing === -1) custSandState.extras.push({n:name, p:price});
+    // Desmarcar
+    el.classList.remove('selected');
+    custSandState.extras = custSandState.extras.filter(function(x){ return x.n !== name; });
   } else {
-    if (existing !== -1) custSandState.extras.splice(existing, 1);
+    // Se for extra (não-carne): regra de máx. 1 — deselecionar o anterior
+    if (tipo !== 'carne') {
+      var adGrid = document.getElementById('cust-ad-grid');
+      adGrid.querySelectorAll('.cust-ad-tag[data-tipo="extra"].selected').forEach(function(prev){
+        prev.classList.remove('selected');
+        var pn = prev.dataset.name;
+        custSandState.extras = custSandState.extras.filter(function(x){ return x.n !== pn; });
+      });
+    }
+    el.classList.add('selected');
+    custSandState.extras.push({n:name, p:price, carne: tipo === 'carne'});
   }
   custAtualizarTotal();
 }
@@ -2947,17 +2974,20 @@ function renderComandaBill(num) {
   var totGeral = totPend + totPago;
 
   var rowsHtml = '';
-  if (pendentes.length > 0) {
-    rowsHtml += '<div style="font-size:.58rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1.5px;padding:8px 0 4px;">Em Aberto</div>';
-    pendentes.forEach(function(it){
-      var isSel = selectedIds.indexOf(it.id) !== -1;
-      rowsHtml += '<div class="cmd-brow'+(isSel?' sel-row':'')+'"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></div>';
-    });
-  }
+  // Itens em aberto (pendentes) — em destaque
+  pendentes.forEach(function(it){
+    var isSel = selectedIds.indexOf(it.id) !== -1;
+    var preco = parseFloat(it.item_preco || 0);
+    var pFmt  = (preco < 0 ? '−' : '') + 'R$ ' + Math.abs(preco).toFixed(2).replace('.',',');
+    rowsHtml += '<div class="cmd-brow'+(isSel?' sel-row':'')+'"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price">'+pFmt+'</span></div>';
+  });
+  // Divisória + pagos (mais compactos)
   if (pagos.length > 0) {
-    rowsHtml += '<div style="font-size:.58rem;font-weight:900;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;padding:10px 0 4px;">✅ Já Pagos</div>';
+    rowsHtml += '<div style="font-size:.6rem;font-weight:900;color:var(--green);letter-spacing:1px;padding:6px 6px 3px;margin-top:4px;border-top:1px dashed rgba(34,197,94,.2);">✅ PAGOS ('+pagos.length+')</div>';
     pagos.forEach(function(it){
-      rowsHtml += '<div class="cmd-brow pago-brow"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price">R$ '+parseFloat(it.item_preco).toFixed(2).replace('.',',')+'</span></div>';
+      var preco = parseFloat(it.item_preco || 0);
+      var pFmt  = (preco < 0 ? '−' : '') + 'R$ ' + Math.abs(preco).toFixed(2).replace('.',',');
+      rowsHtml += '<div class="cmd-brow pago-brow"><span class="cmd-brow-em">'+(it.emoji||'🍽️')+'</span><span class="cmd-brow-name">'+it.item_nome+'</span><span class="cmd-brow-price" style="color:var(--green);">'+pFmt+'</span></div>';
     });
   }
   rowsEl.innerHTML = rowsHtml || '<div style="text-align:center;padding:20px;color:var(--txt2);font-size:.75rem;">Vazio</div>';
