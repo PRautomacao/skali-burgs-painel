@@ -842,7 +842,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         <div class="cmd-hint-box" id="cmd-hint-box">☑️ Marque os itens pagos na grade ao lado</div>
         <button class="cmd-act partial" id="cmd-btn-partial" onclick="fecharParcial()">💳 Fechar Itens Selecionados</button>
         <button class="cmd-act conta" onclick="pedirContaMesa()">📋 Pedir Conta</button>
-        <button class="cmd-act print" onclick="printCupomMesa()">🖨️ Imprimir Cupom</button>
+        <button class="cmd-act print" onclick="printCupomMesa('completo')">🖨️ Imprimir Completo</button>
+        <button class="cmd-act print" onclick="printCupomMesa('aberto')" style="background:var(--am);color:#111;">🖨️ Imprimir Em Aberto</button>
         <button class="cmd-act close" onclick="fecharMesaTotal()">✅ Fechar Mesa</button>
       </div>
     </div>
@@ -2713,21 +2714,29 @@ function calcMostrarPreview(pagamento, selecionados, totalSel) {
   var trocoRow = document.getElementById('calc-troco-row');
   var faltaRow = document.getElementById('calc-falta-row');
 
-  if (diff >= 0) {
-    // Tem troco ou exato
+  if (diff > 0.009) {
+    // Excedente: vai abater no saldo restante (não é troco devolvido)
     trocoRow.style.display = 'flex';
     faltaRow.style.display = 'none';
+    document.getElementById('calc-troco-row').querySelector('span').textContent = '💰 Abatimento no saldo';
     document.getElementById('calc-troco-lbl').textContent = calcFmt(diff);
-  } else {
+  } else if (diff < -0.009) {
     // Itens selecionados ultrapassam o pagamento
     trocoRow.style.display = 'none';
     faltaRow.style.display = 'flex';
     document.getElementById('calc-falta-lbl').textContent = calcFmt(Math.abs(diff));
+  } else {
+    // Valor exato
+    trocoRow.style.display = 'none';
+    faltaRow.style.display = 'none';
   }
 
   if (selecionados.length > 0) {
     confirmBtn.classList.add('show');
-    confirmBtn.textContent = '✅ Confirmar — ' + selecionados.length + ' item(ns) = ' + calcFmt(totalSel) + ' | Troco: ' + calcFmt(Math.max(0, diff));
+    var resumo = diff > 0.009
+      ? ' | Abatimento: ' + calcFmt(diff)
+      : (diff < -0.009 ? ' | Falta: ' + calcFmt(Math.abs(diff)) : ' | Valor exato ✅');
+    confirmBtn.textContent = '✅ Confirmar — ' + selecionados.length + ' item(ns) = ' + calcFmt(totalSel) + resumo;
   }
 }
 
@@ -2742,8 +2751,30 @@ async function calcConfirmar() {
       .in('id', calcItensSelected);
     if (resp.error) throw resp.error;
 
-    // Atualizar estado local
+    // Se houve excedente de pagamento → criar item de abatimento negativo
     var num = mesaAtual;
+    var totalSel = (mesaItensGlobais[num] || [])
+      .filter(function(it){ return calcItensSelected.indexOf(it.id) !== -1; })
+      .reduce(function(s, it){ return s + parseFloat(it.item_preco || 0); }, 0);
+    var pagamento = parseFloat(document.getElementById('calc-input').value) || 0;
+    var excedente = pagamento - totalSel;
+    if (excedente > 0.009) {
+      var pgFmt = pagamento.toFixed(2).replace('.', ',');
+      var abat = await SUPA.from('itens_comanda_skali').insert([{
+        mesa_numero: num,
+        item_nome: 'Abatimento (pgto R$ ' + pgFmt + ')',
+        item_preco: -excedente,
+        emoji: '💰',
+        status_pagamento: 'pago',
+        pedido_id: 'abatimento-' + Date.now()
+      }]).select();
+      if (!abat.error && abat.data && abat.data.length) {
+        if (!mesaItensGlobais[num]) mesaItensGlobais[num] = [];
+        mesaItensGlobais[num].push(abat.data[0]);
+      }
+    }
+
+    // Atualizar estado local
     (mesaItensGlobais[num] || []).forEach(function(it){
       if (calcItensSelected.indexOf(it.id) !== -1) it.status_pagamento = 'pago';
     });
@@ -3007,43 +3038,89 @@ async function fecharMesaTotal() {
   } catch(e) { showToast('❌ Erro ao fechar mesa'); }
 }
 
-function printCupomMesa() {
+function buildCupomHTML(tipo) {
   var num   = mesaAtual;
   var itens = mesaItensGlobais[num] || [];
   var now   = new Date();
   var hr    = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
   var data  = now.toLocaleDateString('pt-BR');
 
-  var pends = itens.filter(function(i){ return i.status_pagamento==='pendente'; });
-  var pagos = itens.filter(function(i){ return i.status_pagamento==='pago'; });
-  var totPend = pends.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
-  var totPago = pagos.reduce(function(s,i){ return s+parseFloat(i.item_preco||0); }, 0);
-  var totGeral = totPend + totPago;
+  // Filtrar itens conforme tipo
+  var itensFiltrados = tipo === 'aberto'
+    ? itens.filter(function(i){ return i.status_pagamento !== 'pago'; })
+    : itens;
+
+  var pends   = itens.filter(function(i){ return i.status_pagamento !== 'pago'; });
+  var pagos   = itens.filter(function(i){ return i.status_pagamento === 'pago'; });
+  // Calcula corretamente ignorando abatimentos (preços negativos já estão em 'pago')
+  var totPago = pagos.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+  var totPend = pends.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+  var totGeral = itens.reduce(function(s,i){ return s + parseFloat(i.item_preco||0); }, 0);
+
+  var titulo = tipo === 'aberto' ? 'ITENS EM ABERTO' : 'COMANDA COMPLETA';
 
   var rows = '';
-  itens.forEach(function(it){
-    var p = parseFloat(it.item_preco||0).toFixed(2).replace('.',',');
-    var pago = it.status_pagamento==='pago' ? ' ✅' : '';
-    rows += '<div class="comanda-row"><span>'+(it.emoji||'')+' '+it.item_nome+pago+'</span><span>R$ '+p+'</span></div>';
+  itensFiltrados.forEach(function(it){
+    var preco = parseFloat(it.item_preco || 0);
+    var p = preco.toFixed(2).replace('.', ',');
+    var isAbat = preco < 0;
+    var pago = it.status_pagamento === 'pago' && !isAbat ? ' ✅' : '';
+    var corPreco = isAbat ? 'color:#e74c3c;' : '';
+    rows += '<div style="display:flex;justify-content:space-between;padding:3px 0;font-size:12px;border-bottom:1px dotted #ddd;">'
+      + '<span>'+(it.emoji||'')+' '+it.item_nome+pago+'</span>'
+      + '<span style="white-space:nowrap;'+corPreco+'">R$ '+p+'</span>'
+      + '</div>';
   });
 
-  var html = '<div class="comanda">'
-    + '<h1>Skali Burg\'s</h1>'
-    + '<h2>Mesa '+String(num).padStart(2,'0')+'</h2>'
-    + '<div class="comanda-row"><span>Data</span><span>'+data+'</span></div>'
-    + '<div class="comanda-row"><span>Hora</span><span>'+hr+'</span></div>'
-    + '<div class="comanda-divider"></div>'
-    + rows
-    + '<div class="comanda-divider"></div>'
-    + (pagos.length>0?'<div class="comanda-row"><span>Já pago</span><span>R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>':'')
-    + '<div class="comanda-row"><span><strong>EM ABERTO</strong></span><span><strong>R$ '+totPend.toFixed(2).replace('.',',')+'</strong></span></div>'
-    + '<div class="comanda-row"><span><strong>TOTAL GERAL</strong></span><span><strong>R$ '+totGeral.toFixed(2).replace('.',',')+'</strong></span></div>'
-    + '<div class="comanda-footer">Obrigado pela preferência!<br>Skali Burg\'s</div>'
-    + '</div>';
+  if (!rows) rows = '<div style="text-align:center;padding:12px;color:#888;font-size:12px;">Nenhum item</div>';
 
-  var pt = document.getElementById('print-target');
-  pt.innerHTML = html;
-  window.print();
+  var css = '<style>'
+    + 'body{margin:0;padding:16px;font-family:Arial,sans-serif;color:#111;}'
+    + 'h1{text-align:center;font-size:20px;margin:0 0 2px;letter-spacing:2px;}'
+    + 'h2{text-align:center;font-size:14px;margin:0 0 8px;color:#555;}'
+    + '.titulo{text-align:center;font-size:11px;font-weight:bold;letter-spacing:1px;color:#888;margin-bottom:8px;}'
+    + '.divider{border:none;border-top:1px dashed #aaa;margin:8px 0;}'
+    + '.total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:13px;}'
+    + '.total-row.destaque{font-weight:bold;font-size:14px;border-top:1px solid #111;margin-top:4px;padding-top:6px;}'
+    + '.footer{text-align:center;margin-top:14px;font-size:11px;color:#888;}'
+    + '@media print{body{padding:8px;}}'
+    + '</style>';
+
+  var html = '<!DOCTYPE html><html><head><meta charset="utf-8"><title>Cupom Mesa '+String(num).padStart(2,'0')+'</title>'+css+'</head><body>'
+    + '<h1>🍔 Skali Burg\'s</h1>'
+    + '<h2>Mesa '+String(num).padStart(2,'0')+'</h2>'
+    + '<div class="titulo">'+titulo+'</div>'
+    + '<div style="display:flex;justify-content:space-between;font-size:11px;color:#888;margin-bottom:6px;">'
+    + '<span>'+data+'</span><span>'+hr+'</span></div>'
+    + '<hr class="divider">'
+    + rows
+    + '<hr class="divider">';
+
+  if (tipo === 'completo') {
+    if (pagos.length > 0) {
+      html += '<div class="total-row"><span>Já pago</span><span>R$ '+totPago.toFixed(2).replace('.',',')+'</span></div>';
+    }
+    html += '<div class="total-row"><span>Em aberto</span><span>R$ '+totPend.toFixed(2).replace('.',',')+'</span></div>';
+    html += '<div class="total-row destaque"><span>TOTAL GERAL</span><span>R$ '+totGeral.toFixed(2).replace('.',',')+'</span></div>';
+  } else {
+    html += '<div class="total-row destaque"><span>TOTAL EM ABERTO</span><span>R$ '+totPend.toFixed(2).replace('.',',')+'</span></div>';
+  }
+
+  html += '<div class="footer">Obrigado pela preferência!<br><strong>Skali Burg\'s</strong></div>'
+    + '</body></html>';
+
+  return html;
+}
+
+function printCupomMesa(tipo) {
+  tipo = tipo || 'completo';
+  var win = window.open('', '_print', 'width=440,height=700,scrollbars=yes');
+  if (!win) { showToast('⚠️ Permita popups para imprimir'); return; }
+  win.document.write(buildCupomHTML(tipo));
+  win.document.close();
+  win.focus();
+  win.print();
+  setTimeout(function(){ win.close(); }, 800);
 }
 
 // ── ZERÉSIMA ──────────────────────────────────────────────
