@@ -473,15 +473,15 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-bill-title{font-family:'Bebas Neue',sans-serif;font-size:1rem;color:var(--am);letter-spacing:2px;}
 .cmd-bill-sub{font-size:.6rem;color:var(--txt2);font-weight:700;margin-top:2px;}
 .cmd-bill-rows{flex:1;overflow-y:auto;padding:6px 16px;}
-.cmd-brow{display:flex;align-items:center;gap:5px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);font-size:.7rem;font-weight:700;}
-.cmd-brow.sel-row{color:var(--am);}
-.cmd-brow.pago-brow{opacity:.32;}
-.cmd-brow-em{font-size:.9rem;}
-.cmd-brow-name{flex:1;line-height:1.3;}
-.cmd-brow-price{font-family:'Bebas Neue',sans-serif;font-size:.82rem;color:var(--am);}
+.cmd-brow{display:flex;align-items:center;gap:6px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.07);font-size:.82rem;font-weight:700;color:var(--txt);}
+.cmd-brow.sel-row{color:var(--am);background:rgba(245,196,0,.06);border-radius:6px;padding:8px 6px;}
+.cmd-brow.pago-brow{opacity:.55;}
+.cmd-brow-em{font-size:1rem;flex-shrink:0;}
+.cmd-brow-name{flex:1;line-height:1.4;word-break:break-word;}
+.cmd-brow-price{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--am);white-space:nowrap;flex-shrink:0;}
 .cmd-brow.pago-brow .cmd-brow-price{color:var(--green);}
 .cmd-totals-box{padding:12px 16px;border-top:1px solid var(--border);}
-.cmd-trow{display:flex;justify-content:space-between;font-size:.72rem;font-weight:700;color:var(--txt2);margin-bottom:4px;}
+.cmd-trow{display:flex;justify-content:space-between;font-size:.82rem;font-weight:700;color:var(--txt2);margin-bottom:5px;}
 .cmd-trow.sel-total{color:var(--am);}
 .cmd-trow.pago-total{color:var(--green);}
 .cmd-trow.grand{font-family:'Bebas Neue',sans-serif;font-size:1.1rem;color:var(--am);border-top:1px solid var(--border);padding-top:6px;margin-top:4px;}
@@ -2698,6 +2698,8 @@ function calcMostrarPreview(pagamento, selecionados, totalSel) {
   var itemList = document.getElementById('calc-item-list');
   var confirmBtn = document.getElementById('calc-confirm-btn');
   if (!preview) return;
+  // Garantir que o botão nunca fique travado de tentativa anterior
+  if (confirmBtn) { confirmBtn.disabled = false; confirmBtn.textContent = '✅ Confirmar Pagamento'; }
   preview.classList.add('show');
 
   // Lista de itens selecionados
@@ -2802,10 +2804,10 @@ async function calcConfirmar() {
       renderMesas();
     }
   } catch(e) {
-    console.error(e);
-    showToast('❌ Erro: ' + (e && e.message ? e.message : 'Falha'));
-    btn.disabled = false;
-    btn.textContent = '✅ Confirmar Pagamento';
+    console.error('calcConfirmar error:', e);
+    var msg = (e && e.message) ? e.message : (typeof e === 'string' ? e : 'Falha desconhecida');
+    showToast('❌ Erro: ' + msg);
+    if (btn) { btn.disabled = false; btn.textContent = '✅ Confirmar Pagamento'; }
   }
 }
 
