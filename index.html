@@ -390,12 +390,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .cmd-cat-pill.active{background:var(--am);color:var(--az);border-color:var(--am);}
 .cmd-cat-pill:hover:not(.active){border-color:rgba(245,196,0,.4);color:var(--txt);}
 .catalog-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px;}
-.catalog-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:0;cursor:pointer;transition:all .18s;text-align:center;user-select:none;position:relative;overflow:hidden;}
-.catalog-card:hover{border-color:var(--am);transform:translateY(-2px);box-shadow:0 4px 14px rgba(245,196,0,.18);}
+.catalog-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:8px 6px;cursor:pointer;transition:all .18s;text-align:center;user-select:none;position:relative;}
+.catalog-card:hover{border-color:var(--am);background:rgba(245,196,0,.08);transform:translateY(-2px);box-shadow:0 4px 14px rgba(245,196,0,.18);}
 .catalog-card:active{transform:scale(.96);}
-.catalog-card-img{width:100%;height:70px;object-fit:cover;display:block;}
-.catalog-card-body{padding:5px 6px 7px;}
-.catalog-card-emoji{display:none;}
+.catalog-card-emoji{font-size:2rem;line-height:1.2;margin-bottom:4px;}
 .catalog-card-name{font-size:.64rem;font-weight:900;color:var(--txt);line-height:1.3;margin-bottom:3px;}
 .catalog-card-price{font-family:'Bebas Neue',sans-serif;font-size:.9rem;color:var(--am);}
 .catalog-adding{position:absolute;inset:0;background:rgba(245,196,0,.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;animation:catalogAdd .35s ease;}
@@ -891,49 +889,8 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 </div>
 
 <script>
-// ── MAPA DE FOTOS POR CATEGORIA / NOME ─────────────────────
-var FOTO_CAT_IDX = {
-  sanduiches:'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300&h=200&fit=crop&auto=format',
-  porcoes:   'https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=300&h=200&fit=crop&auto=format',
-  grelhados: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop&auto=format',
-  bebidas:   'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop&auto=format',
-  sucos:     'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop&auto=format',
-  cremes:    'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=300&h=200&fit=crop&auto=format',
-  default:   'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300&h=200&fit=crop&auto=format'
-};
-var FOTO_SUBCAT_IDX = {
-  'Batata':       'https://images.unsplash.com/photo-1576107232684-1279f8786654?w=300&h=200&fit=crop&auto=format',
-  'Mandioca':     'https://images.unsplash.com/photo-1606750985994-3afde8e3427e?w=300&h=200&fit=crop&auto=format',
-  'Linguiça':     'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=300&h=200&fit=crop&auto=format',
-  'Filé de Tilá': 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=300&h=200&fit=crop&auto=format',
-  'Torresm':      'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?w=300&h=200&fit=crop&auto=format',
-  'Disquinho':    'https://images.unsplash.com/photo-1558030006-450675393462?w=300&h=200&fit=crop&auto=format',
-  'Quibe':        'https://images.unsplash.com/photo-1552611052-33e04de081de?w=300&h=200&fit=crop&auto=format',
-  'Strogonoff':   'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=200&fit=crop&auto=format',
-  'Omelete':      'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=300&h=200&fit=crop&auto=format',
-  'Picanha':      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=300&h=200&fit=crop&auto=format',
-  'Tábua':        'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=300&h=200&fit=crop&auto=format',
-  'Refrigerante': 'https://images.unsplash.com/photo-1581006852262-e4307cf6a807?w=300&h=200&fit=crop&auto=format',
-  'Água':         'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=300&h=200&fit=crop&auto=format',
-  'Red Bull':     'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=300&h=200&fit=crop&auto=format',
-  'Monster':      'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=300&h=200&fit=crop&auto=format',
-  'Cerveja':      'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop&auto=format',
-  'Heineken':     'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop&auto=format',
-  'Amstel':       'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop&auto=format',
-  'Long Neck':    'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=300&h=200&fit=crop&auto=format',
-  'Cozumel':      'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=300&h=200&fit=crop&auto=format',
-  'Smirnoff':     'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=300&h=200&fit=crop&auto=format',
-  'Suco de':      'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=300&h=200&fit=crop&auto=format',
-  'Creme de':     'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=300&h=200&fit=crop&auto=format'
-};
-function getFotoIdx(nome, catId) {
-  for (var prefix in FOTO_SUBCAT_IDX) {
-    if (nome && nome.indexOf(prefix) !== -1) return FOTO_SUBCAT_IDX[prefix];
-  }
-  return FOTO_CAT_IDX[catId] || FOTO_CAT_IDX['default'];
-}
-
-var MENU=[\n  {
+var MENU=[
+  {
     id:"sanduiches", icon:"🥪", title:"Sanduíches", sub:"Toque no item para ver adicionais",
     subs:[
       { title:null, items:[
@@ -2507,14 +2464,11 @@ function renderCatalog() {
     sucosItems.push({e:'🍊',n:'Suco de Laranja',p:12});
     sucosItems.push({e:'🍊',n:'Suco de Laranja s/Gelo',p:13});
     sucosItems.forEach(function(item){
-      var foto = getFotoIdx(item.n, 'sucos');
       var card = document.createElement('div');
       card.className = 'catalog-card';
-      card.innerHTML = '<img class="catalog-card-img" src="'+foto+'" alt="'+item.n+'" loading="lazy">'
-        +'<div class="catalog-card-body">'
+      card.innerHTML = '<div class="catalog-card-emoji">'+item.e+'</div>'
         +'<div class="catalog-card-name">'+item.n+'</div>'
-        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
-        +'</div>';
+        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>';
       card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e,item.n,item.p,card);
       grid.appendChild(card);
     });
@@ -2530,14 +2484,11 @@ function renderCatalog() {
     }
     var cremesItems = CREMES_LIST.map(function(s){ return {e:'🍨',n:'Creme de '+s.replace(/^[^\s]+\s/,''),p:15}; });
     cremesItems.forEach(function(item){
-      var foto = getFotoIdx(item.n, 'cremes');
       var card = document.createElement('div');
       card.className = 'catalog-card';
-      card.innerHTML = '<img class="catalog-card-img" src="'+foto+'" alt="'+item.n+'" loading="lazy">'
-        +'<div class="catalog-card-body">'
+      card.innerHTML = '<div class="catalog-card-emoji">'+item.e+'</div>'
         +'<div class="catalog-card-name">'+item.n+'</div>'
-        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>'
-        +'</div>';
+        +'<div class="catalog-card-price">R$ '+item.p.toFixed(2).replace('.',',')+'</div>';
       card.onclick = (function(e,n,p,c){ return function(){ adicionarItemCatalogo(e,n,p,c); }; })(item.e,item.n,item.p,card);
       grid.appendChild(card);
     });
@@ -2548,14 +2499,11 @@ function renderCatalog() {
     if (cmdCatFilter !== 'all' && cmdCatFilter !== cat.id) return;
     cat.subs.forEach(function(sub){
       sub.items.forEach(function(item){
-        var foto = getFotoIdx(item.n, cat.id);
         var card = document.createElement('div');
         card.className = 'catalog-card';
-        card.innerHTML = '<img class="catalog-card-img" src="'+foto+'" alt="'+item.n+'" loading="lazy">'
-          +'<div class="catalog-card-body">'
+        card.innerHTML = '<div class="catalog-card-emoji">'+(item.e||'🍽️')+'</div>'
           +'<div class="catalog-card-name">'+item.n+'</div>'
-          +'<div class="catalog-card-price">R$ '+Number(item.p).toFixed(2).replace('.',',')+'</div>'
-          +'</div>';
+          +'<div class="catalog-card-price">R$ '+Number(item.p).toFixed(2).replace('.',',')+'</div>';
         // Sanduíches com customização; demais direto
         if (item.ads) {
           card.onclick = (function(e,n,p,d,c){ return function(){ abrirCustSanduiche(e,n,p,d,c); }; })(item.e||'🍔',item.n,item.p,item.d||'',card);
