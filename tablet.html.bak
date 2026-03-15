@@ -77,18 +77,14 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .menu-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(142px,1fr));gap:8px;padding:4px 10px 10px;}
 
 /* Product card */
-.menu-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:0;display:flex;flex-direction:column;gap:0;transition:border-color .15s,background .15s;position:relative;overflow:hidden;min-height:170px;}
-.menu-card.in-cart{border-color:rgba(245,196,0,.7);background:rgba(245,196,0,.05);}
-.mc-badge{position:absolute;top:6px;right:6px;background:var(--am);color:var(--az);border-radius:10px;padding:1px 7px;font-size:.58rem;font-weight:900;display:none;z-index:2;}
+.menu-card{background:var(--card);border:1.5px solid var(--border);border-radius:14px;padding:12px;display:flex;flex-direction:column;gap:2px;transition:border-color .15s,background .15s;position:relative;overflow:hidden;min-height:130px;}
+.menu-card.in-cart{border-color:rgba(245,196,0,.6);background:rgba(245,196,0,.05);}
+.mc-badge{position:absolute;top:6px;right:6px;background:var(--am);color:var(--az);border-radius:10px;padding:1px 7px;font-size:.58rem;font-weight:900;display:none;z-index:1;}
 .menu-card.in-cart .mc-badge{display:block;}
-.mc-img-wrap{width:100%;height:100px;overflow:hidden;flex-shrink:0;position:relative;background:var(--bg3);}
-.mc-img-wrap img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s;}
-.menu-card:active .mc-img-wrap img{transform:scale(1.04);}
-.mc-img-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,transparent 55%,rgba(10,10,32,.85) 100%);}
-.mc-body{padding:7px 10px 10px;display:flex;flex-direction:column;flex:1;}
+.mc-em{font-size:1.8rem;line-height:1;margin-bottom:4px;flex-shrink:0;}
 .mc-nm{font-size:.78rem;font-weight:900;line-height:1.25;color:var(--txt);}
-.mc-ds{font-size:.58rem;color:var(--txt2);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;flex:1;}
-.mc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:6px;flex-shrink:0;}
+.mc-ds{font-size:.6rem;color:var(--txt2);margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.4;flex:1;}
+.mc-footer{display:flex;justify-content:space-between;align-items:center;margin-top:8px;flex-shrink:0;}
 .mc-pr{font-family:'Bebas Neue',sans-serif;font-size:1.05rem;color:var(--am);}
 .mc-add-btn{background:var(--am);border:none;border-radius:8px;width:30px;height:30px;color:var(--az);font-size:1.2rem;font-weight:900;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .mc-add-btn:active{background:var(--am2);transform:scale(.9);}
@@ -98,8 +94,6 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .mc-qbtn.plus{background:var(--am);color:var(--az);}
 .mc-qbtn.plus:active{background:var(--am2);}
 .mc-qn{font-size:.85rem;font-weight:900;min-width:20px;text-align:center;color:var(--am);}
-/* Emoji no carrinho (lateral e mobile) mantém estilo original */
-.mc-em{font-size:1.6rem;line-height:1;}
 
 /* ── CART SIDEBAR (tablet >= 700px) ── */
 .ped-cart{width:270px;flex-shrink:0;background:var(--bg2);border-left:2px solid var(--border);display:flex;flex-direction:column;}
@@ -600,85 +594,15 @@ function renderItems() {
       }
       var grid = document.createElement('div');
       grid.className = 'menu-grid';
-      sub.items.forEach(function(item){
-        // Injeta foto baseada no nome e categoria
-        item._foto = getFotoItem(item, cat.id);
-        grid.appendChild(buildCard(item));
-      });
+      sub.items.forEach(function(item){ grid.appendChild(buildCard(item)); });
       panel.appendChild(grid);
     });
   });
 }
 
-// ── MAPA DE FOTOS POR CATEGORIA ─────────────────────────────
-var FOTO_CAT = {
-  // Sanduíches / lanches
-  'sanduiches': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&h=260&fit=crop&auto=format',
-  // Porções fritas
-  'porcoes': 'https://images.unsplash.com/photo-1630431341973-02e1b662ec35?w=400&h=260&fit=crop&auto=format',
-  // Pratos & Grelhados
-  'grelhados': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=260&fit=crop&auto=format',
-  // Cervejas & Bebidas
-  'bebidas': 'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=260&fit=crop&auto=format',
-  // Sucos
-  'sucos': 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=260&fit=crop&auto=format',
-  // Cremes
-  'cremes': 'https://images.unsplash.com/photo-1505394033641-40c6ad1178d7?w=400&h=260&fit=crop&auto=format',
-  // Fallback
-  'default': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&h=260&fit=crop&auto=format'
-};
-
-// Fotos específicas para subcategorias dentro de Porções e Grelhados
-var FOTO_SUBCAT = {
-  'Batata':        'https://images.unsplash.com/photo-1576107232684-1279f8786654?w=400&h=260&fit=crop&auto=format',
-  'Mandioca':      'https://images.unsplash.com/photo-1606750985994-3afde8e3427e?w=400&h=260&fit=crop&auto=format',
-  'Frango a Pass': 'https://images.unsplash.com/photo-1626645738196-c2a7c87a8f58?w=400&h=260&fit=crop&auto=format',
-  'Tiras de Fran': 'https://images.unsplash.com/photo-1562967914-608f82629710?w=400&h=260&fit=crop&auto=format',
-  'Linguiça':      'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=260&fit=crop&auto=format',
-  'Filé de Tilá':  'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=260&fit=crop&auto=format',
-  'Costelin':      'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&h=260&fit=crop&auto=format',
-  'Torresm':       'https://images.unsplash.com/photo-1510130387422-82bed34b37e9?w=400&h=260&fit=crop&auto=format',
-  'Disquinho':     'https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=260&fit=crop&auto=format',
-  'Quibe':         'https://images.unsplash.com/photo-1552611052-33e04de081de?w=400&h=260&fit=crop&auto=format',
-  'Strogonoff':    'https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400&h=260&fit=crop&auto=format',
-  'Omelete':       'https://images.unsplash.com/photo-1510693206972-df098062cb71?w=400&h=260&fit=crop&auto=format',
-  'Filé com Frit': 'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&h=260&fit=crop&auto=format',
-  'Picanha':       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=260&fit=crop&auto=format',
-  'Fraldinha':     'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=260&fit=crop&auto=format',
-  'Contra Filé':   'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=260&fit=crop&auto=format',
-  'Bananinha':     'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&h=260&fit=crop&auto=format',
-  'Tábua':         'https://images.unsplash.com/photo-1529193591184-b1d58069ecdd?w=400&h=260&fit=crop&auto=format',
-  'Refrigerante':  'https://images.unsplash.com/photo-1581006852262-e4307cf6a807?w=400&h=260&fit=crop&auto=format',
-  'Suco Caixa':    'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=400&h=260&fit=crop&auto=format',
-  'Água':          'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&h=260&fit=crop&auto=format',
-  'Cerveja':       'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=260&fit=crop&auto=format',
-  'Heineken':      'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=260&fit=crop&auto=format',
-  'Amstel':        'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=260&fit=crop&auto=format',
-  'Long Neck':     'https://images.unsplash.com/photo-1608270586620-248524c67de9?w=400&h=260&fit=crop&auto=format',
-  'Red Bull':      'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&h=260&fit=crop&auto=format',
-  'Monster':       'https://images.unsplash.com/photo-1622543925917-763c34d1a86e?w=400&h=260&fit=crop&auto=format',
-  'Smirnoff':      'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=260&fit=crop&auto=format',
-  'Cozumel':       'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=260&fit=crop&auto=format',
-  'Tônica':        'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?w=400&h=260&fit=crop&auto=format'
-};
-
-function getFotoItem(item, catId) {
-  // Tenta match por prefixo do nome do item
-  var nome = item.n || '';
-  for (var prefix in FOTO_SUBCAT) {
-    if (nome.indexOf(prefix) === 0 || nome.indexOf(prefix) !== -1) {
-      return FOTO_SUBCAT[prefix];
-    }
-  }
-  // Fallback por categoria
-  return FOTO_CAT[catId] || FOTO_CAT['default'];
-}
-
 function buildCard(item) {
-  var em   = item.e || '🍽️';
-  var qty  = getQty(item.n);
-  var foto = item._foto || FOTO_CAT['default'];
-
+  var em  = item.e || '🍽️';
+  var qty = getQty(item.n);
   var card = document.createElement('div');
   card.className = 'menu-card' + (qty > 0 ? ' in-cart' : '');
   card.setAttribute('data-nome', item.n);
@@ -693,17 +617,12 @@ function buildCard(item) {
 
   card.innerHTML =
       '<div class="mc-badge">×'+qty+'</div>'
-    + '<div class="mc-img-wrap">'
-    +   '<img src="'+foto+'" alt="'+item.n+'" loading="lazy">'
-    +   '<div class="mc-img-overlay"></div>'
-    + '</div>'
-    + '<div class="mc-body">'
-    +   '<div class="mc-nm">'+item.n+'</div>'
-    +   (item.d ? '<div class="mc-ds">'+item.d+'</div>' : '<div class="mc-ds"></div>')
-    +   '<div class="mc-footer">'
-    +     '<span class="mc-pr">R$ '+item.p.toFixed(2).replace('.',',')+'</span>'
-    +     footerHtml
-    +   '</div>'
+    + '<div class="mc-em">'+em+'</div>'
+    + '<div class="mc-nm">'+item.n+'</div>'
+    + (item.d ? '<div class="mc-ds">'+item.d+'</div>' : '<div class="mc-ds"></div>')
+    + '<div class="mc-footer">'
+    +   '<span class="mc-pr">R$ '+item.p.toFixed(2).replace('.',',')+'</span>'
+    +   footerHtml
     + '</div>';
   return card;
 }
@@ -716,17 +635,13 @@ function refreshCard(nome) {
     if (cards[i].getAttribute('data-nome') === nome) {
       // Acha o item
       var found = null;
-      var foundCatId = null;
       for (var ci=0; ci<MENU.length && !found; ci++)
         for (var si=0; si<MENU[ci].subs.length && !found; si++) {
           var items = MENU[ci].subs[si].items;
           for (var ii=0; ii<items.length && !found; ii++)
-            if (items[ii].n === nome) { found = items[ii]; foundCatId = MENU[ci].id; }
+            if (items[ii].n === nome) found = items[ii];
         }
-      if (found) {
-        found._foto = getFotoItem(found, foundCatId || 'sanduiches');
-        cards[i].parentNode.replaceChild(buildCard(found), cards[i]);
-      }
+      if (found) cards[i].parentNode.replaceChild(buildCard(found), cards[i]);
       return;
     }
   }
