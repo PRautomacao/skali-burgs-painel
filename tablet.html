@@ -453,10 +453,16 @@ function atualizarBadges() {
 /* ═══════════════════════════════════════════════════
    MESAS
 ═══════════════════════════════════════════════════ */
+var _mesasCacheTs = 0; // timestamp do último SELECT de mesas
 async function carregarMesasStatus() {
+  var agora = Date.now();
+  if (agora - _mesasCacheTs < 30000 && Object.keys(mesasStatusTab).length > 0) return; // cache 30s
   try {
     var { data } = await SUPA.from('mesas_skali').select('numero,status').order('numero');
-    if (data) data.forEach(function(m){ mesasStatusTab[m.numero] = m.status || 'livre'; });
+    if (data) {
+      data.forEach(function(m){ mesasStatusTab[m.numero] = m.status || 'livre'; });
+      _mesasCacheTs = Date.now();
+    }
   } catch(e) { console.warn('mesas:', e); }
 }
 
