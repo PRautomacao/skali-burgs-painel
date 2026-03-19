@@ -2173,11 +2173,11 @@ var mesaRealtimeSub = null;
 // ── CARREGA ESTADO DO SUPABASE ─────────────────────────────
 async function loadMesasState() {
   try {
-    var r1 = await SUPA.from('mesas_skali').select('numero,status,aberta_em').order('numero');
+    var r1 = await SUPA.from('mesas_skali').select('*').order('numero');
     if (r1.error) { console.warn('mesas_skali:', r1.error.message); return; }
     if (r1.data)  r1.data.forEach(function(m){ mesaStatusGlobais[m.numero] = m.status || 'livre'; });
 
-    var r2 = await SUPA.from('itens_comanda_skali').select('id,mesa_numero,item_nome,item_preco,emoji,status_pagamento,pedido_id,atendente_nome,criado_em').order('criado_em');
+    var r2 = await SUPA.from('itens_comanda_skali').select('*').order('criado_em');
     if (!r2.error && r2.data) {
       mesaItensGlobais = {};
       r2.data.forEach(function(it){
@@ -3161,7 +3161,7 @@ async function showZeresima() {
   try {
     var hoje = new Date().toISOString().split('T')[0];
     var { data: itens, error } = await SUPA.from('itens_comanda_skali')
-      .select('id,mesa_numero,item_nome,item_preco,emoji,status_pagamento,pedido_id,atendente_nome,criado_em').gte('criado_em', hoje+'T00:00:00').order('mesa_numero');
+      .select('*').gte('criado_em', hoje+'T00:00:00').order('mesa_numero');
     if (error) throw error;
     if (!itens || itens.length === 0) {
       body.innerHTML = '<div style="text-align:center;padding:32px;color:var(--txt2);">Nenhum consumo hoje</div>';
