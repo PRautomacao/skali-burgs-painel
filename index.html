@@ -511,6 +511,49 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .zer-mesa-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:10px;}
 .zer-item{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.75rem;font-weight:700;}
 .zer-total-box{background:rgba(245,196,0,.08);border:1.5px solid rgba(245,196,0,.3);border-radius:10px;padding:14px 16px;margin-top:14px;display:flex;justify-content:space-between;align-items:center;}
+/* ── WhatsApp Sidebar dot ──────────────────────────────── */
+.wa-status-dot{font-size:.55rem;margin-left:auto;transition:color .3s;}
+.wa-status-dot.connected{color:var(--green);}
+.wa-status-dot.disconnected{color:var(--txt2);}
+.wa-status-dot.connecting{color:var(--orange);animation:blink 1s infinite;}
+/* ── WhatsApp View ─────────────────────────────────────── */
+.wa-status-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;margin-bottom:16px;}
+.wa-status-header{display:flex;align-items:center;gap:16px;margin-bottom:20px;}
+.wa-status-icon{font-size:2.2rem;line-height:1;}
+.wa-status-title{font-family:'Bebas Neue',sans-serif;font-size:1.2rem;color:var(--txt);letter-spacing:1px;}
+.wa-status-sub{font-size:.72rem;color:var(--txt2);font-weight:700;margin-top:2px;}
+.wa-status-chip{display:flex;align-items:center;gap:6px;padding:6px 14px;border-radius:20px;font-size:.72rem;font-weight:900;border:1.5px solid;margin-left:auto;white-space:nowrap;}
+.wa-status-chip.connected{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.4);color:var(--green);}
+.wa-status-chip.disconnected{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.4);color:var(--red);}
+.wa-status-chip.connecting{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.4);color:var(--orange);}
+.wa-blink{animation:blink 1.2s infinite;}
+.wa-qr-area{text-align:center;padding:20px;background:rgba(0,0,0,.2);border-radius:12px;border:1px dashed rgba(245,196,0,.3);margin-bottom:20px;}
+.wa-qr-label{font-size:.8rem;font-weight:900;color:var(--am);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;}
+.wa-qr-box{display:inline-flex;align-items:center;justify-content:center;width:216px;height:216px;background:#fff;border-radius:12px;padding:8px;}
+.wa-qr-hint{font-size:.68rem;color:var(--txt2);margin-top:12px;font-weight:700;line-height:1.5;}
+.wa-qr-timer{font-size:.68rem;color:var(--orange);font-weight:900;margin-top:6px;}
+.wa-actions{display:flex;gap:10px;flex-wrap:wrap;}
+.wa-btn{flex:1;min-width:160px;padding:12px 20px;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:900;font-size:.82rem;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .2s;}
+.wa-btn.connect{background:linear-gradient(135deg,#25d366,#128c7e);color:#fff;}
+.wa-btn.connect:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(37,211,102,.35);}
+.wa-btn.connect:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none;}
+.wa-btn.disconnect{background:rgba(239,68,68,.15);color:var(--red);border:1.5px solid rgba(239,68,68,.3);}
+.wa-btn.disconnect:hover{background:rgba(239,68,68,.28);}
+.wa-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+.wa-info-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+.wa-info-icon{font-size:1.4rem;margin-bottom:6px;}
+.wa-info-label{font-size:.62rem;color:var(--txt2);font-weight:900;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;}
+.wa-info-val{font-size:.75rem;font-weight:900;color:var(--txt);word-break:break-all;}
+.wa-log-card{background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+.wa-log-header{padding:10px 14px;font-size:.72rem;font-weight:900;color:var(--txt2);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);}
+.wa-log-body{padding:10px 14px;max-height:180px;overflow-y:auto;font-family:monospace;font-size:.72rem;}
+.wa-log-entry{padding:3px 0;border-bottom:1px solid rgba(255,255,255,.04);display:flex;gap:8px;}
+.wa-log-time{color:var(--txt2);flex-shrink:0;}
+.wa-log-msg.ok{color:var(--green);}
+.wa-log-msg.err{color:var(--red);}
+.wa-log-msg.info{color:var(--am);}
+.wa-log-msg.warn{color:var(--orange);}
+@media(max-width:900px){.wa-info-grid{grid-template-columns:repeat(2,1fr);}}
 </style>
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -567,6 +610,11 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
       <button class="sb-btn" onclick="showView('clientes',this)">👥 Clientes</button>
 
       <button class="sb-btn" onclick="showView('impressao',this)">🖨️ Impressão</button>
+      <div class="sb-section" style="margin-top:8px;">Integração</div>
+      <button class="sb-btn" id="btn-whatsapp" onclick="showView('whatsapp',this)">
+        <span>📱 WhatsApp</span>
+        <span class="wa-status-dot" id="wa-sb-dot" title="Status">⬤</span>
+      </button>
     </nav>
     <div class="sb-footer">
       <div class="sb-time" id="sb-clock">⏰ 00:00</div>
@@ -771,6 +819,80 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
         </div>
         <div class="mesa-grid" id="mesa-grid"></div>
       </div>
+
+      <!-- ══ VIEW WHATSAPP ══════════════════════════════════════ -->
+      <div class="view" id="view-whatsapp">
+        <div class="section-title">
+          <div><h2>📱 WhatsApp</h2><p>Gerencie a conexão do bot Skali com o WhatsApp</p></div>
+          <button class="btn-am" style="font-size:.72rem;padding:7px 14px;" onclick="waCheckStatus()">🔄 Verificar Status</button>
+        </div>
+
+        <!-- Status Card -->
+        <div class="wa-status-card" id="wa-status-card">
+          <div class="wa-status-header">
+            <div class="wa-status-icon" id="wa-icon">📵</div>
+            <div>
+              <div class="wa-status-title" id="wa-status-title">Verificando conexão...</div>
+              <div class="wa-status-sub" id="wa-status-sub">Aguarde um momento</div>
+            </div>
+            <div class="wa-status-chip" id="wa-chip">
+              <span class="wa-blink" id="wa-chip-dot">⬤</span>
+              <span id="wa-chip-text">—</span>
+            </div>
+          </div>
+
+          <!-- QR Code Area -->
+          <div class="wa-qr-area" id="wa-qr-area" style="display:none;">
+            <div class="wa-qr-label">Escaneie o QR Code com o WhatsApp</div>
+            <div class="wa-qr-box" id="wa-qr-box">
+              <img id="wa-qr-img" src="" alt="QR Code" style="max-width:200px;max-height:200px;border-radius:8px;">
+            </div>
+            <div class="wa-qr-hint">Abra o WhatsApp → ⋮ → Dispositivos conectados → Conectar dispositivo</div>
+            <div class="wa-qr-timer" id="wa-qr-timer">QR válido por <span id="wa-qr-countdown">60</span>s</div>
+          </div>
+
+          <!-- Actions -->
+          <div class="wa-actions">
+            <button class="wa-btn connect" id="wa-btn-connect" onclick="waConnect()">
+              <span id="wa-btn-connect-icon">🔗</span> Conectar WhatsApp
+            </button>
+            <button class="wa-btn disconnect" id="wa-btn-disconnect" onclick="waDisconnect()" style="display:none;">
+              <span>📴</span> Desconectar
+            </button>
+          </div>
+        </div>
+
+        <!-- Instance Info -->
+        <div class="wa-info-grid">
+          <div class="wa-info-card">
+            <div class="wa-info-icon">🤖</div>
+            <div class="wa-info-label">Instância</div>
+            <div class="wa-info-val" id="wa-instance-name">skalibot</div>
+          </div>
+          <div class="wa-info-card">
+            <div class="wa-info-icon">📡</div>
+            <div class="wa-info-label">Servidor n8n</div>
+            <div class="wa-info-val">skali-burgs-n8n</div>
+          </div>
+          <div class="wa-info-card">
+            <div class="wa-info-icon">🕐</div>
+            <div class="wa-info-label">Última verificação</div>
+            <div class="wa-info-val" id="wa-last-check">—</div>
+          </div>
+          <div class="wa-info-card">
+            <div class="wa-info-icon">🔁</div>
+            <div class="wa-info-label">Próximo check</div>
+            <div class="wa-info-val" id="wa-next-check">15s</div>
+          </div>
+        </div>
+
+        <!-- Log -->
+        <div class="wa-log-card">
+          <div class="wa-log-header">📋 Log de Eventos</div>
+          <div class="wa-log-body" id="wa-log"></div>
+        </div>
+      </div>
+      <!-- ══ /VIEW WHATSAPP ══════════════════════════════════════ -->
     </div>
   </div>
 </div>
@@ -1096,7 +1218,7 @@ function showView(name, btn) {
   document.querySelectorAll('.sb-btn').forEach(function(b){ b.classList.remove('active'); });
   document.getElementById('view-'+name).classList.add('active');
   if (btn) btn.classList.add('active');
-  var titles = {dashboard:'Dashboard',fila:'Fila de Pedidos',mesas:'Mesas',historico:'Histórico',clientes:'Clientes',impressao:'Central de Impressão'};
+  var titles = {dashboard:'Dashboard',fila:'Fila de Pedidos',mesas:'Mesas',historico:'Histórico',clientes:'Clientes',impressao:'Central de Impressão',whatsapp:'WhatsApp — Conexão'};
   document.getElementById('view-title').textContent = titles[name] || name;
   if (name==='fila'||name==='dashboard') renderKanban();
   if (name==='historico') renderHistorico();
@@ -1104,6 +1226,7 @@ function showView(name, btn) {
   if (name==='impressao') populateImpressao();
   if (name==='cardapio')  carLoad();
   if (name==='mesas')     { loadMesasState().then(function(){ renderMesas(); iniciarMesaRealtime(); }); }
+  if (name==='whatsapp')  waInit();
 }
 
 // ── CLOCK ──────────────────────────────
@@ -3220,6 +3343,280 @@ if (typeof window !== 'undefined') {
 
     document.getElementById('login-user').focus();
   });
+}
+
+// ══════════════════════════════════════════════════════════
+//  WHATSAPP PANEL  — Skali Burg's
+// ══════════════════════════════════════════════════════════
+var WA = {
+  N8N_BASE : 'https://skali-burgs-n8n.k7sawm.easypanel.host',
+  state    : 'unknown',   // 'connected' | 'disconnected' | 'connecting' | 'unknown'
+  pollTimer: null,
+  qrTimer  : null,
+  qrCountdown: 0,
+  nextCheckTimer: null,
+  nextCheckSec: 15
+};
+
+// ── Log helper ──────────────────────────────────────────
+function waLog(msg, type) {
+  type = type || 'info';
+  var log = document.getElementById('wa-log');
+  if (!log) return;
+  var now = new Date().toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  var entry = document.createElement('div');
+  entry.className = 'wa-log-entry';
+  entry.innerHTML = '<span class="wa-log-time">' + now + '</span>'
+    + '<span class="wa-log-msg ' + type + '">' + msg + '</span>';
+  log.prepend(entry);
+  // keep max 50 entries
+  while (log.children.length > 50) log.removeChild(log.lastChild);
+}
+
+// ── Set UI state ────────────────────────────────────────
+function waSetState(state, extra) {
+  extra = extra || {};
+  WA.state = state;
+
+  var icon  = document.getElementById('wa-icon');
+  var title = document.getElementById('wa-status-title');
+  var sub   = document.getElementById('wa-status-sub');
+  var chip  = document.getElementById('wa-chip');
+  var dot   = document.getElementById('wa-chip-dot');
+  var txt   = document.getElementById('wa-chip-text');
+  var btnC  = document.getElementById('wa-btn-connect');
+  var btnD  = document.getElementById('wa-btn-disconnect');
+  var sbDot = document.getElementById('wa-sb-dot');
+
+  if (!icon) return;
+
+  // reset chip class
+  chip.className = 'wa-status-chip ' + state;
+  if (sbDot) { sbDot.className = 'wa-status-dot ' + state; }
+
+  if (state === 'connected') {
+    icon.textContent  = '📲';
+    title.textContent = 'WhatsApp Conectado';
+    sub.textContent   = extra.phone ? '📱 ' + extra.phone : 'Bot ativo e recebendo mensagens';
+    dot.textContent   = '⬤'; txt.textContent = 'Online';
+    btnC.style.display = 'none';
+    btnD.style.display = '';
+    document.getElementById('wa-qr-area').style.display = 'none';
+    waStopQrTimer();
+  } else if (state === 'connecting') {
+    icon.textContent  = '🔄';
+    title.textContent = 'Aguardando Conexão';
+    sub.textContent   = 'Escaneie o QR Code com o WhatsApp';
+    dot.textContent   = '⬤'; txt.textContent = 'Conectando';
+    btnC.disabled = true;
+    btnC.style.display = '';
+    btnD.style.display = 'none';
+  } else if (state === 'disconnected') {
+    icon.textContent  = '📵';
+    title.textContent = 'WhatsApp Desconectado';
+    sub.textContent   = 'Clique em Conectar para iniciar';
+    dot.textContent   = '⬤'; txt.textContent = 'Offline';
+    btnC.disabled = false;
+    btnC.style.display = '';
+    btnD.style.display = 'none';
+    document.getElementById('wa-qr-area').style.display = 'none';
+    waStopQrTimer();
+  } else {
+    icon.textContent  = '❓';
+    title.textContent = 'Status desconhecido';
+    sub.textContent   = 'Verifique a conexão com o n8n';
+    dot.textContent   = '⬤'; txt.textContent = '—';
+    btnC.disabled = false;
+    btnC.style.display = '';
+    btnD.style.display = 'none';
+  }
+}
+
+// ── QR Code Timer ────────────────────────────────────────
+function waStartQrTimer(seconds) {
+  waStopQrTimer();
+  WA.qrCountdown = seconds || 60;
+  var el = document.getElementById('wa-qr-countdown');
+  WA.qrTimer = setInterval(function() {
+    WA.qrCountdown--;
+    if (el) el.textContent = WA.qrCountdown;
+    if (WA.qrCountdown <= 0) {
+      waStopQrTimer();
+      waLog('⏱ QR Code expirado. Clique em Conectar novamente.', 'warn');
+      waSetState('disconnected');
+    }
+  }, 1000);
+}
+
+function waStopQrTimer() {
+  if (WA.qrTimer) { clearInterval(WA.qrTimer); WA.qrTimer = null; }
+}
+
+// ── Show QR Code ─────────────────────────────────────────
+function waShowQR(qrData) {
+  var area = document.getElementById('wa-qr-area');
+  var img  = document.getElementById('wa-qr-img');
+  if (!area || !img) return;
+
+  // qrData may be: base64 image, base64 string, or a URL
+  if (qrData.startsWith('data:image')) {
+    img.src = qrData;
+  } else if (qrData.startsWith('http')) {
+    img.src = qrData;
+  } else {
+    // raw base64 — assume PNG
+    img.src = 'data:image/png;base64,' + qrData;
+  }
+  area.style.display = '';
+  waStartQrTimer(60);
+  waSetState('connecting');
+  waLog('📷 QR Code recebido. Escaneie agora!', 'info');
+}
+
+// ── Next check countdown ─────────────────────────────────
+function waStartNextCheckCountdown() {
+  if (WA.nextCheckTimer) clearInterval(WA.nextCheckTimer);
+  WA.nextCheckSec = 15;
+  var el = document.getElementById('wa-next-check');
+  WA.nextCheckTimer = setInterval(function() {
+    WA.nextCheckSec--;
+    if (el) el.textContent = WA.nextCheckSec + 's';
+    if (WA.nextCheckSec <= 0) {
+      clearInterval(WA.nextCheckTimer);
+      WA.nextCheckTimer = null;
+      if (WA.state !== 'connecting') waCheckStatus();
+    }
+  }, 1000);
+}
+
+// ── Update last check time ───────────────────────────────
+function waUpdateLastCheck() {
+  var el = document.getElementById('wa-last-check');
+  if (el) el.textContent = new Date().toLocaleTimeString('pt-BR');
+}
+
+// ── CONNECT ─────────────────────────────────────────────
+async function waConnect() {
+  var btn = document.getElementById('wa-btn-connect');
+  btn.disabled = true;
+  btn.innerHTML = '<span>⏳</span> Conectando...';
+  waLog('🔗 Solicitando conexão ao n8n...', 'info');
+
+  try {
+    var resp = await fetch(WA.N8N_BASE + '/webhook/skali-whatsapp-connect', {
+      method : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body   : JSON.stringify({action: 'connect', instance: 'skalibot'})
+    });
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json().catch(function() { return {}; });
+
+    waLog('✅ Resposta recebida do webhook', 'ok');
+
+    // Handle response — n8n can return: {status, qrCode, qr, base64}
+    var status = (data.status || data.state || '').toLowerCase();
+
+    if (data.qrCode || data.qr || data.base64) {
+      var qr = data.qrCode || data.qr || data.base64;
+      waShowQR(qr);
+    } else if (status === 'open' || status === 'connected') {
+      waLog('✅ WhatsApp já conectado!', 'ok');
+      waSetState('connected', {phone: data.phone || data.phoneNumber});
+    } else if (status === 'connecting' || status === 'qr') {
+      waSetState('connecting');
+      waLog('⏳ Aguardando QR Code do servidor...', 'warn');
+      // Poll after 3s for QR
+      setTimeout(waCheckStatus, 3000);
+    } else {
+      // Unknown response — show raw
+      waLog('⚠ Resposta: ' + JSON.stringify(data).substring(0, 120), 'warn');
+      waSetState('connecting');
+    }
+  } catch(e) {
+    waLog('❌ Erro: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.innerHTML = '<span>🔗</span> Conectar WhatsApp';
+    waSetState('disconnected');
+  }
+
+  waUpdateLastCheck();
+  waStartNextCheckCountdown();
+}
+
+// ── DISCONNECT ───────────────────────────────────────────
+async function waDisconnect() {
+  if (!confirm('Desconectar o WhatsApp?\nO bot vai parar de receber mensagens.')) return;
+  waLog('📴 Solicitando desconexão...', 'warn');
+
+  try {
+    var resp = await fetch(WA.N8N_BASE + '/webhook/skali-whatsapp-disconnect', {
+      method : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body   : JSON.stringify({action: 'disconnect', instance: 'skalibot'})
+    });
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json().catch(function() { return {}; });
+    waLog('✅ Desconectado com sucesso', 'ok');
+    waSetState('disconnected');
+    showToast('📴 WhatsApp desconectado');
+  } catch(e) {
+    waLog('❌ Erro ao desconectar: ' + e.message, 'err');
+    showToast('❌ Falha ao desconectar');
+  }
+
+  waUpdateLastCheck();
+  waStartNextCheckCountdown();
+}
+
+// ── CHECK STATUS ─────────────────────────────────────────
+async function waCheckStatus() {
+  waLog('🔍 Verificando status...', 'info');
+
+  try {
+    var resp = await fetch(WA.N8N_BASE + '/webhook/skali-whatsapp-connect', {
+      method : 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body   : JSON.stringify({action: 'status', instance: 'skalibot'})
+    });
+
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
+    var data = await resp.json().catch(function() { return {}; });
+
+    var status = (data.status || data.state || data.connectionStatus || '').toLowerCase();
+
+    if (status === 'open' || status === 'connected') {
+      waSetState('connected', {phone: data.phone || data.phoneNumber});
+      waLog('✅ Conectado | ' + (data.phone || 'bot ativo'), 'ok');
+    } else if (data.qrCode || data.qr || data.base64) {
+      var qr = data.qrCode || data.qr || data.base64;
+      waShowQR(qr);
+    } else if (status === 'close' || status === 'disconnected' || status === 'closed') {
+      waSetState('disconnected');
+      waLog('⚠ Desconectado', 'warn');
+    } else if (status === 'connecting' || status === 'qr') {
+      waSetState('connecting');
+      waLog('⏳ Conectando...', 'warn');
+    } else {
+      waLog('❓ Status: ' + JSON.stringify(data).substring(0, 100), 'warn');
+    }
+  } catch(e) {
+    waLog('❌ Falha ao verificar: ' + e.message, 'err');
+    waSetState('unknown');
+  }
+
+  waUpdateLastCheck();
+  waStartNextCheckCountdown();
+}
+
+// ── Init when view opens ─────────────────────────────────
+function waInit() {
+  // Only run first init once
+  if (WA._inited) return;
+  WA._inited = true;
+  waLog('🚀 Painel WhatsApp iniciado', 'info');
+  waCheckStatus();
 }
 
 </script>
