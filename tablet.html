@@ -196,9 +196,10 @@ html,body{height:100%;font-family:'Nunito',sans-serif;background:var(--bg);color
 .wa-m-log-m.info{color:var(--am);}
 .wa-m-log-m.warn{color:#f97316;}
 /* Topbar WA button */
-.tb-wa-btn{background:rgba(37,211,102,.12);border:1.5px solid rgba(37,211,102,.3);border-radius:10px;padding:7px 11px;color:#25d366;font-size:.82rem;cursor:pointer;flex-shrink:0;transition:all .2s;line-height:1;}
-.tb-wa-btn.offline{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#ef4444;}
-.tb-wa-btn:active{transform:scale(.94);}
+.wa-fab{position:absolute;bottom:20px;right:20px;width:48px;height:48px;border-radius:50%;background:rgba(37,211,102,.15);border:2px solid rgba(37,211,102,.35);color:#25d366;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:all .2s;box-shadow:0 4px 14px rgba(0,0,0,.4);}
+.wa-fab.offline{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:#ef4444;}
+.wa-fab:active{transform:scale(.91);}
+#sc-mesa{position:relative;}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -228,13 +229,16 @@ const SUPA = window.supabase.createClient(
 <div class="screen" id="sc-mesa">
   <div class="topbar">
     <div class="tb-title" style="flex:1;">🪑 SELECIONAR MESA</div>
-    <button class="tb-wa-btn offline" id="tb-wa-btn" onclick="abrirWaModal()" title="Conexão WhatsApp">📱</button>
     <button class="tb-badge" id="atendente-badge-lbl" onclick="trocarAtendente()">👤 —</button>
   </div>
   <div class="mesa-grid-wrap">
     <div class="mesa-grid-title">SELECIONE A MESA</div>
     <div class="mesa-sel-grid" id="mesa-sel-grid"></div>
   </div>
+  <!-- WhatsApp FAB -->
+  <button class="wa-fab" id="wa-fab" onclick="abrirWaModal()" title="Conexão WhatsApp">
+    <span id="wa-fab-icon">📱</span>
+  </button>
 </div>
 
 <!-- ── TELA 2: Menu + Carrinho ── -->
@@ -944,7 +948,8 @@ function waSetState(state, extra) {
   var btnC  = document.getElementById('wa-m-btn-c');
   var btnD  = document.getElementById('wa-m-btn-d');
   var qr    = document.getElementById('wa-m-qr-area');
-  var tbBtn = document.getElementById('tb-wa-btn');
+  var fab   = document.getElementById('wa-fab');
+  var fabIc = document.getElementById('wa-fab-icon');
 
   if (!icon) return;
   chip.className = 'wa-m-chip ' + state;
@@ -957,14 +962,14 @@ function waSetState(state, extra) {
     btnC.style.display = 'none'; btnD.style.display = '';
     if (qr) qr.style.display = 'none';
     waStopQrTimer();
-    if (tbBtn) { tbBtn.className = 'tb-wa-btn'; tbBtn.textContent = '📲'; }
+    if (fab) { fab.className = 'wa-fab'; if (fabIc) fabIc.textContent = '📲'; }
   } else if (state === 'connecting') {
     icon.textContent  = '🔄';
     title.textContent = 'Aguardando QR Code';
     sub.textContent   = 'Escaneie com o WhatsApp';
     chip.textContent  = '● Conectando';
     btnC.disabled = true; btnC.style.display = ''; btnD.style.display = 'none';
-    if (tbBtn) { tbBtn.className = 'tb-wa-btn offline'; tbBtn.textContent = '🔄'; }
+    if (fab) { fab.className = 'wa-fab offline'; if (fabIc) fabIc.textContent = '🔄'; }
   } else if (state === 'disconnected') {
     icon.textContent  = '📵';
     title.textContent = 'Desconectado';
@@ -973,13 +978,13 @@ function waSetState(state, extra) {
     btnC.disabled = false; btnC.style.display = ''; btnD.style.display = 'none';
     if (qr) qr.style.display = 'none';
     waStopQrTimer();
-    if (tbBtn) { tbBtn.className = 'tb-wa-btn offline'; tbBtn.textContent = '📵'; }
+    if (fab) { fab.className = 'wa-fab offline'; if (fabIc) fabIc.textContent = '📵'; }
   } else {
     icon.textContent  = '❓';
     title.textContent = 'Status desconhecido';
     sub.textContent   = 'Verifique o servidor';
     chip.textContent  = '—';
-    if (tbBtn) { tbBtn.className = 'tb-wa-btn offline'; tbBtn.textContent = '📱'; }
+    if (fab) { fab.className = 'wa-fab offline'; if (fabIc) fabIc.textContent = '📱'; }
   }
 }
 
